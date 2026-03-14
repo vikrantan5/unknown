@@ -1,0 +1,1322 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutureProctor · AI-Powered Exam Integrity</title>
+    
+    <!-- Bootstrap & Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #a855f7;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.05);
+            --glow-primary: 0 0 30px rgba(99, 102, 241, 0.3);
+            --glow-secondary: 0 0 30px rgba(168, 85, 247, 0.3);
+            --glow-accent: 0 0 30px rgba(6, 182, 212, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
+            z-index: -2;
+        }
+
+        /* Animated Grid */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: floatParticle 10s infinite linear;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Navbar */
+        .navbar-glass {
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            transition: all 0.3s;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-glass.scrolled {
+            background: rgba(2, 6, 23, 0.95);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--light) !important;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-brand i {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glowPulse 3s infinite;
+        }
+
+        .navbar-brand span {
+            background: linear-gradient(135deg, #fff, var(--gray));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.5)); }
+        }
+
+        .nav-link {
+            color: var(--gray) !important;
+            font-weight: 500;
+            padding: 8px 16px !important;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 80%;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--light) !important;
+        }
+
+        /* Buttons */
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            z-index: 1;
+        }
+
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-gradient:hover::before {
+            opacity: 1;
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--light);
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-lg {
+            padding: 16px 40px;
+            font-size: 1.1rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Fixed Hero Title Styles */
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: var(--light);
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        /* Floating Animation */
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-15px) rotate(2deg); }
+            66% { transform: translateY(15px) rotate(-2deg); }
+        }
+
+        .glow {
+            filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.5));
+            animation: glowPulse 3s infinite;
+        }
+
+        /* Section Styles */
+        .section-dark {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title-glass {
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, var(--gray));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle-glass {
+            font-size: 1.2rem;
+            color: var(--gray);
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        /* Feature Cards */
+        .feature-card-glass {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .feature-card-glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .feature-card-glass:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 30px 60px -15px rgba(99, 102, 241, 0.3);
+        }
+
+        .feature-card-glass:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .feature-icon img {
+            max-width: 60px;
+            transition: all 0.3s;
+            filter: brightness(0) invert(1);
+        }
+
+        .feature-card-glass:hover .feature-icon {
+            transform: scale(1.1);
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .feature-card-glass:hover .feature-icon img {
+            transform: rotate(360deg);
+        }
+
+        .feature-card-glass h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--light);
+        }
+
+        .feature-card-glass p {
+            color: var(--gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Contact Form */
+        .contact-form-glass {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 50px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 20px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            color: var(--light);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: var(--gray);
+            opacity: 0.7;
+        }
+
+        /* Footer */
+        .footer-glass {
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
+            padding: 60px 0 40px;
+        }
+
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            margin: 0 15px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        .footer-links a:hover {
+            color: var(--light);
+        }
+
+        .social-links a {
+            color: var(--gray);
+            font-size: 1.5rem;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--darker);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loading-spinner.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-right-color: var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .section-title-glass {
+                font-size: 2rem;
+            }
+            
+            .contact-form-glass {
+                padding: 30px;
+            }
+            
+            .footer-links a {
+                display: inline-block;
+                margin: 10px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Animated Background -->
+    <div class="gradient-bg"></div>
+    <div class="grid-bg"></div>
+    
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-glass" id="mainNavbar" data-aos="fade-down" data-aos-duration="1000">
+        <div class="container">
+            <a class="navbar-brand" href="#" data-testid="navbar-brand">
+                <i class="fas fa-shield-alt"></i>
+                <span>FutureProctor</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home" data-testid="nav-home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features" data-testid="nav-features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact" data-testid="nav-contact">Contact</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                         <a class="btn btn-glass" href="{% url 'admin_dashboard_enhanced' %}" role="button" data-testid="admin-btn">
+                            <i class="fas fa-user-shield me-2"></i>Admin
+                        </a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-glass" href="{% url 'login' %}" role="button" data-testid="login-btn">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-gradient" href="{% url 'registration' %}" role="button" data-testid="register-btn">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="home" data-testid="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right" data-aos-duration="1200">
+                    <h1 class="hero-title" data-testid="hero-title">
+                        AI-Powered <span>Exam Integrity</span> for the Digital Age
+                    </h1>
+                    <p class="hero-subtitle" data-testid="hero-subtitle">
+                        Revolutionizing online examinations with advanced artificial intelligence. 
+                        Real-time monitoring, facial recognition, and behavioral analysis for 
+                        unparalleled exam security.
+                    </p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="https://youtu.be" class="btn btn-gradient btn-lg" target="_blank" data-testid="promo-video-btn">
+                            <i class="fas fa-play-circle me-2"></i>Watch Demo
+                        </a>
+                        <a href="#features" class="btn btn-glass btn-lg" data-testid="learn-more-btn">
+                            <i class="fas fa-arrow-down me-2"></i>Explore Features
+                        </a>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="row mt-5 g-3">
+                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                            <div class="stat-card text-center">
+                                <div class="stat-number">99.9%</div>
+                                <p class="mb-0" style="color: var(--gray);">Accuracy Rate</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+                            <div class="stat-card text-center">
+                                <div class="stat-number">24/7</div>
+                                <p class="mb-0" style="color: var(--gray);">AI Monitoring</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="600">
+                            <div class="stat-card text-center">
+                                <div class="stat-number">100%</div>
+                                <p class="mb-0" style="color: var(--gray);">Secure</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center" data-aos="fade-left" data-aos-duration="1200">
+                    <div class="floating">
+                        <img src="{% static 'images/robot.png' %}" alt="Robot" class="img-fluid glow" style="border-radius: 30px; max-width: 90%;" data-testid="hero-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Section -->
+    <section class="section-dark" id="features" data-testid="features-section">
+        <div class="container">
+            <div class="row align-items-center mb-5">
+                <div class="col-lg-6 order-lg-2" data-aos="fade-left" data-aos-duration="1200">
+                    <div class="floating">
+                        <img src="{% static 'images/ai-sec.png' %}" alt="AI Security" class="img-fluid glow" style="border-radius: 30px;" data-testid="ai-security-image">
+                    </div>
+                </div>
+                <div class="col-lg-6 order-lg-1" data-aos="fade-right" data-aos-duration="1200">
+                    <div class="feature-card-glass" style="text-align: left; padding: 50px;">
+                        <h2 style="font-size: 2.8rem; font-weight: 800; margin-bottom: 30px; background: linear-gradient(135deg, #fff, var(--gray)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            Why Choose FutureProctor?
+                        </h2>
+                        <p style="font-size: 1.2rem; color: var(--primary); font-weight: 600; margin-bottom: 30px;">
+                            The Gold Standard in Online Exam Proctoring
+                        </p>
+                        <div class="row g-4">
+                            <div class="col-12" data-aos="fade-up" data-aos-delay="100">
+                                <div class="d-flex align-items-center">
+                                    <div style="width: 40px; height: 40px; background: rgba(99, 102, 241, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <i class="fas fa-check-circle" style="color: var(--primary);"></i>
+                                    </div>
+                                    <div>
+                                        <h4 style="color: var(--light); font-weight: 700;">Exam Credibility</h4>
+                                        <p style="color: var(--gray); margin: 0;">Ensures the authenticity and integrity of exam results</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12" data-aos="fade-up" data-aos-delay="200">
+                                <div class="d-flex align-items-center">
+                                    <div style="width: 40px; height: 40px; background: rgba(168, 85, 247, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <i class="fas fa-check-circle" style="color: var(--secondary);"></i>
+                                    </div>
+                                    <div>
+                                        <h4 style="color: var(--light); font-weight: 700;">User-Friendly</h4>
+                                        <p style="color: var(--gray); margin: 0;">Intuitive interface for both instructors and students</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12" data-aos="fade-up" data-aos-delay="300">
+                                <div class="d-flex align-items-center">
+                                    <div style="width: 40px; height: 40px; background: rgba(6, 182, 212, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <i class="fas fa-check-circle" style="color: var(--accent);"></i>
+                                    </div>
+                                    <div>
+                                        <h4 style="color: var(--light); font-weight: 700;">Universal Compatibility</h4>
+                                        <p style="color: var(--gray); margin: 0;">Works seamlessly with any examination portal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Features Section -->
+    <section class="section-dark" style="padding-top: 0;" data-testid="advanced-features-section">
+        <div class="container">
+            <h2 class="section-title-glass" data-aos="fade-up" data-testid="advanced-features-title">Advanced Proctoring Features</h2>
+            <p class="section-subtitle-glass" data-aos="fade-up" data-aos-delay="100" data-testid="advanced-features-subtitle">
+                Powered by cutting-edge AI technology for comprehensive exam monitoring
+            </p>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card-glass" data-testid="feature-face-verification">
+                        <div class="feature-icon">
+                            <img src="{% static 'images/facial.png' %}" alt="Face Verification">
+                        </div>
+                        <h3>Face Verification</h3>
+                        <p>Advanced facial recognition ensures the registered candidate is taking the exam throughout the session.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card-glass" data-testid="feature-tab-switching">
+                        <div class="feature-icon">
+                            <img src="{% static 'images/touch.png' %}" alt="Tab Switching Detection">
+                        </div>
+                        <h3>Tab Switching Detection</h3>
+                        <p>Real-time monitoring of browser activity to prevent unauthorized resource access during exams.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card-glass" data-testid="feature-object-detection">
+                        <div class="feature-icon">
+                            <img src="{% static 'images/object.png' %}" alt="Object Detection">
+                        </div>
+                        <h3>Object Detection</h3>
+                        <p>AI-powered detection of unauthorized items like phones, books, or notes in the exam environment.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card-glass" data-testid="feature-gaze-detection">
+                        <div class="feature-icon">
+                            <img src="{% static 'images/eye.png' %}" alt="Gaze Detection">
+                        </div>
+                        <h3>Gaze Detection</h3>
+                        <p>Tracks eye movement patterns to ensure candidates maintain focus on the exam screen.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="500">
+                    <div class="feature-card-glass" data-testid="feature-multiple-person">
+                        <div class="feature-icon">
+                            <img src="{% static 'images/mp.png' %}" alt="Multiple Person Detection">
+                        </div>
+                        <h3>Multiple Person Detection</h3>
+                        <p>Identifies and alerts when multiple individuals are present during the examination.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="600">
+                    <div class="feature-card-glass" data-testid="feature-audio-analysis">
+                        <div class="feature-icon">
+                            <img src="{% static 'images/audio.png' %}" alt="Audio Analysis">
+                        </div>
+                        <h3>Audio Analysis</h3>
+                        <p>Advanced audio monitoring to detect suspicious conversations or background noises.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="700">
+                <div class="glass-card d-inline-block p-4" data-testid="data-security-note" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 60px;">
+                    <i class="fas fa-database me-2" style="color: var(--primary);"></i>
+                    <strong style="color: var(--light);">Secure Data Management:</strong>
+                    <span style="color: var(--gray);"> All proctoring data is encrypted and stored in secure PostgreSQL databases.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section-dark" id="contact" style="padding-top: 0;" data-testid="contact-section">
+        <div class="container">
+            <h2 class="section-title-glass" data-aos="fade-up" data-testid="contact-title">Get In Touch</h2>
+            <p class="section-subtitle-glass" data-aos="fade-up" data-aos-delay="100" data-testid="contact-subtitle">
+                Ready to transform your online examination process? Let's talk.
+            </p>
+            
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="contact-form-glass">
+                        <form id="contactForm" data-testid="contact-form">
+                            <div class="mb-4">
+                                <input type="text" class="form-control" placeholder="Your Name" required data-testid="contact-name-input">
+                            </div>
+                            <div class="mb-4">
+                                <input type="email" class="form-control" placeholder="Your Email" required data-testid="contact-email-input">
+                            </div>
+                            <div class="mb-4">
+                                <input type="text" class="form-control" placeholder="Subject" required data-testid="contact-subject-input">
+                            </div>
+                            <div class="mb-4">
+                                <textarea class="form-control" rows="5" placeholder="Your Message" required data-testid="contact-message-input"></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-gradient btn-lg w-100" data-testid="contact-submit-btn">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-glass" data-testid="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="footer-links mb-4">
+                        <a href="#" data-testid="footer-privacy">Privacy Policy</a>
+                        <a href="#" data-testid="footer-terms">Terms of Service</a>
+                        <a href="#contact" data-testid="footer-contact">Contact</a>
+                    </div>
+                    <div class="social-links mb-4">
+                        <a href="https://www.facebook.com" class="mx-3" target="_blank" data-testid="social-facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://x.com" class="mx-3" target="_blank" data-testid="social-twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                                                <a href="https://www.linkedin.com" class="mx-3" target="_blank" data-testid="social-linkedin">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="mx-3" data-testid="social-instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <p style="color: var(--gray); font-size: 1rem;">&copy; 2025 FutureProctor. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            once: true,
+            offset: 100,
+            duration: 1000,
+            easing: 'ease-in-out',
+            delay: 100
+        });
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (particlesContainer) {
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 10 + 's';
+                    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                    particle.style.background = `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, 255, ${Math.random() * 0.5 + 0.3})`;
+                    particlesContainer.appendChild(particle);
+                }
+            }
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar-glass');
+            if (navbar) {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }
+        });
+
+        // Loading spinner
+        window.addEventListener('load', function() {
+            const spinner = document.getElementById('loadingSpinner');
+            if (spinner) {
+                setTimeout(() => {
+                    spinner.classList.add('hidden');
+                }, 500);
+            }
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                        inline: 'nearest'
+                    });
+                    
+                    // Close mobile menu if open
+                    const navbarCollapse = document.querySelector('.navbar-collapse');
+                    if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                        navbarCollapse.classList.remove('show');
+                    }
+                }
+            });
+        });
+
+        // Active nav link on scroll
+        function updateActiveNavLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let currentSection = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const href = link.getAttribute('href').substring(1);
+                if (href === currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveNavLink);
+
+        // Contact form submission
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = {
+                    name: document.querySelector('[data-testid="contact-name-input"]').value,
+                    email: document.querySelector('[data-testid="contact-email-input"]').value,
+                    subject: document.querySelector('[data-testid="contact-subject-input"]').value,
+                    message: document.querySelector('[data-testid="contact-message-input"]').value
+                };
+
+                // Show loading state on button
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+                submitBtn.disabled = true;
+
+                // Simulate form submission (replace with actual AJAX call)
+                setTimeout(() => {
+                    // Show success message
+                    alert('Thank you for your message! We will get back to you soon.');
+                    
+                    // Reset form
+                    this.reset();
+                    
+                    // Restore button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 2000);
+            });
+        }
+
+        // Parallax effect on hover for feature cards
+        document.querySelectorAll('.feature-card-glass').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const angleX = (y - centerY) / 20;
+                const angleY = (centerX - x) / 20;
+                
+                this.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateY(-10px)`;
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            });
+        });
+
+        // Counter animation for stats
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const text = stat.textContent;
+                if (text.includes('%')) {
+                    const number = parseFloat(text);
+                    let current = 0;
+                    const increment = number / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= number) {
+                            stat.textContent = text;
+                            clearInterval(timer);
+                        } else {
+                            stat.textContent = Math.round(current) + '%';
+                        }
+                    }, 20);
+                } else if (text.includes('/')) {
+                    // Handle 24/7 format
+                    // Skip animation for this format
+                }
+            });
+        }
+
+        // Trigger animation when stats come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateStats();
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+
+        document.querySelectorAll('.stat-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Initialize particles on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+        });
+
+        // Add floating animation to feature icons
+        const featureIcons = document.querySelectorAll('.feature-icon');
+        featureIcons.forEach((icon, index) => {
+            icon.style.animation = `floatIcon ${3 + index * 0.5}s ease-in-out infinite`;
+        });
+
+        // Add floating animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatIcon {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add ripple effect to buttons
+        const buttons = document.querySelectorAll('.btn-gradient, .btn-glass');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                
+                const x = e.clientX - e.target.offsetLeft;
+                const y = e.clientY - e.target.offsetTop;
+                
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add ripple effect CSS
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            .btn-gradient, .btn-glass {
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .ripple {
+                position: absolute;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+                width: 100px;
+                height: 100px;
+                margin-left: -50px;
+                margin-top: -50px;
+            }
+            
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
+
+        // Add dynamic gradient background movement
+        document.addEventListener('mousemove', function(e) {
+            const gradientBg = document.querySelector('.gradient-bg');
+            if (gradientBg) {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                gradientBg.style.background = `
+                    radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at ${(1 - x) * 100}% ${(1 - y) * 100}%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 50%)
+                `;
+            }
+        });
+
+        // Add scroll progress indicator
+        const progressBar = document.createElement('div');
+        progressBar.className = 'scroll-progress';
+        document.body.appendChild(progressBar);
+
+        const progressStyle = document.createElement('style');
+        progressStyle.textContent = `
+            .scroll-progress {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 0%;
+                height: 3px;
+                background: linear-gradient(90deg, var(--primary), var(--secondary));
+                z-index: 1001;
+                transition: width 0.1s;
+                box-shadow: 0 0 20px var(--primary);
+            }
+        `;
+        document.head.appendChild(progressStyle);
+
+        window.addEventListener('scroll', function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            progressBar.style.width = scrolled + '%';
+        });
+
+        // Add tooltips for social links
+        const socialLinks = document.querySelectorAll('.social-links a');
+        socialLinks.forEach(link => {
+            link.setAttribute('data-tooltip', link.getAttribute('href').includes('facebook') ? 'Facebook' :
+                                            link.getAttribute('href').includes('twitter') ? 'Twitter' :
+                                            link.getAttribute('href').includes('linkedin') ? 'LinkedIn' : 'Instagram');
+            
+            link.addEventListener('mouseenter', function(e) {
+                const tooltip = document.createElement('span');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = this.getAttribute('data-tooltip');
+                this.appendChild(tooltip);
+                
+                setTimeout(() => {
+                    tooltip.style.opacity = '1';
+                    tooltip.style.transform = 'translateY(0)';
+                }, 10);
+            });
+            
+            link.addEventListener('mouseleave', function() {
+                const tooltip = this.querySelector('.tooltip');
+                if (tooltip) {
+                    tooltip.remove();
+                }
+            });
+        });
+
+        // Add tooltip CSS
+        const tooltipStyle = document.createElement('style');
+        tooltipStyle.textContent = `
+            .social-links a {
+                position: relative;
+            }
+            
+            .social-links .tooltip {
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%) translateY(10px);
+                background: var(--primary);
+                color: white;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                white-space: nowrap;
+                opacity: 0;
+                transition: all 0.3s;
+                pointer-events: none;
+                margin-bottom: 10px;
+            }
+            
+            .social-links .tooltip::after {
+                content: '';
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border-width: 5px;
+                border-style: solid;
+                border-color: var(--primary) transparent transparent transparent;
+            }
+        `;
+        document.head.appendChild(tooltipStyle);
+
+        // Add form validation styling
+        const formInputs = document.querySelectorAll('.form-control');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+                
+                if (this.value.trim() !== '') {
+                    this.style.borderColor = 'var(--success)';
+                } else {
+                    this.style.borderColor = 'var(--border)';
+                }
+            });
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const mobileMenu = document.querySelector('.navbar-collapse.show');
+                if (mobileMenu) {
+                    mobileMenu.classList.remove('show');
+                }
+            }
+        });
+
+        // Add console greeting
+        console.log('%c🚀 FutureProctor - AI-Powered Exam Integrity', 'color: #6366f1; font-size: 16px; font-weight: bold;');
+        console.log('%cWelcome to the future of online examinations!', 'color: #a855f7; font-size: 14px;');
+    </script>
+</body>
+</html>

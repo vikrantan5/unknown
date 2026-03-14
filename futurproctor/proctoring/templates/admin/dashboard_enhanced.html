@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FuturProctor · modern admin</title>
+    <!-- Font Awesome 6 (free) for crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f0eb;  /* soft light beige background */
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        /* main container – clean, floating card */
+        .dashboard {
+            max-width: 1440px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            padding: 32px 36px;
+            transition: all 0.2s ease;
+        }
+
+        /* header area with powder blue / rose pink touches */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .brand h1 {
+            font-size: 28px;
+            font-weight: 600;
+            background: linear-gradient(145deg, #6d8f9f 0%, #b5c9d6 80%); /* powder blue nuance */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+        }
+
+        .brand h1 i {
+            background: none;
+            -webkit-text-fill-color: #e9b6b1; /* rose pink accent */
+            margin-right: 6px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #8b8b8b;
+            font-size: 15px;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .logout-btn {
+            background: #e9b6b1;  /* rose pink */
+            color: #2e2e2e;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 15px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(233, 182, 177, 0.3);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .logout-btn i {
+            font-size: 16px;
+        }
+
+        .logout-btn:hover {
+            background: #dd9f99;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 18px rgba(220, 150, 140, 0.3);
+            color: #1e1e1e;
+        }
+
+        /* stats cards – powder blue / light brown / rose pink accents */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 18px;
+            margin-bottom: 44px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 22px 18px;
+            box-shadow: 0 8px 18px -6px rgba(158, 142, 128, 0.12);
+            border: 1px solid #f0e7de; /* light beige border */
+            transition: transform 0.15s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: #b5c9d6; /* powder blue */
+        }
+
+        .stat-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #7f7f7f;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-title i {
+            color: #e9b6b1; /* rose pink */
+            font-size: 18px;
+        }
+
+        .stat-number {
+            font-size: 38px;
+            font-weight: 700;
+            color: #4b3f34;   /* deep light-brown shade */
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        /* different icon colors for variety */
+        .stat-card:nth-child(1) .stat-title i { color: #6d8f9f; } /* powder */
+        .stat-card:nth-child(3) .stat-title i { color: #dbb88c; } /* light brown */
+        .stat-card:nth-child(5) .stat-title i { color: #b5c9d6; } /* light powder */
+
+        /* section style */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .section-header i {
+            font-size: 26px;
+            color: #e9b6b1; /* rose pink */
+            background: #fff3f1;
+            padding: 8px;
+            border-radius: 16px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #4b3f34; /* light brown shade */
+            letter-spacing: -0.2px;
+        }
+
+        .section-title span {
+            background: #e9b6b1;
+            color: #2e2e2e;
+            font-size: 14px;
+            padding: 4px 12px;
+            border-radius: 30px;
+            margin-left: 12px;
+            font-weight: 500;
+        }
+
+        /* quick action cards (soft, modern) */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin: 10px 0 16px;
+        }
+
+        .action-card {
+            background: #faf7f2;  /* light beige */
+            border-radius: 20px;
+            padding: 18px 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #4b3f34;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1px solid #efe4d8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-card i {
+            font-size: 26px;
+            background: white;
+            padding: 14px;
+            border-radius: 50%;
+            color: #6d8f9f;  /* powder blue */
+            box-shadow: 0 6px 12px #ebdbd1;
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-card:hover {
+            background: #ffffff;
+            border-color: #e9b6b1;
+            transform: scale(1.02);
+            box-shadow: 0 12px 20px -12px rgba(233, 182, 177, 0.5);
+        }
+
+        .action-card:hover i {
+            background: #e9b6b1;
+            color: #2e2e2e;
+        }
+
+        /* tables – minimal, airy */
+        .table-wrapper {
+            border-radius: 24px;
+            background: #fefcf9;  /* off-white/light beige */
+            border: 1px solid #f0e3d8;
+            overflow-x: auto;
+            padding: 4px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 680px;
+        }
+
+        th {
+            text-align: left;
+            padding: 18px 20px;
+            background: #fff9f5;
+            font-weight: 600;
+            font-size: 14px;
+            color: #6d5d4e; /* warm grey-brown */
+            border-bottom: 2px solid #e9d9cd;
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f2e4d9;
+            color: #3e3a36;
+            font-size: 15px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #fdf3ed;  /* very light rose tint */
+        }
+
+        /* badges */
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 500;
+            background: #f0e7de; /* light beige */
+            color: #6d5d4e;
+        }
+
+        .badge-pending {
+            background: #fde6d2;
+            color: #aa7845;
+        }
+
+        .badge-success {
+            background: #dff0e3;
+            color: #2d6a4f;
+        }
+
+        .badge-danger {
+            background: #ffe4e1;
+            color: #b13e3e;
+        }
+
+        /* small buttons inside tables */
+        .btn-sm {
+            background: #b5c9d6;  /* powder blue */
+            color: #1e2e3a;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.15s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-sm i {
+            margin-right: 4px;
+        }
+
+        .btn-sm:hover {
+            background: #9fb7c7;
+            color: #0f1f2b;
+            box-shadow: 0 4px 8px rgba(181, 201, 214, 0.4);
+        }
+
+        /* evidence icons */
+        .evidence-icons i {
+            font-size: 16px;
+            background: #f0e7de;
+            padding: 6px;
+            border-radius: 30px;
+            margin: 0 2px;
+            color: #6d8f9f;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            background: #fcf8f4;
+            border-radius: 28px;
+            color: #b1a089;
+            font-size: 16px;
+            border: 1px dashed #d9c8b8;
+        }
+
+        .empty-state i {
+            font-size: 36px;
+            color: #e9b6b1;
+            margin-bottom: 14px;
+            opacity: 0.8;
+        }
+
+        /* special accent for suspicious badge */
+        .fa-exclamation-triangle {
+            color: #dd8e7a;
+        }
+
+        /* minor spacing */
+        .fa-chevron-right {
+            font-size: 12px;
+            margin-left: 4px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <!-- top header: powder/rose mix -->
+    <div class="top-bar">
+        <div class="brand">
+            <h1><i class="fas fa-graduation-cap"></i> FuturProctor · admin</h1>
+            <div class="subtitle"><i class="fas fa-bell" style="color:#e9b6b1; margin-right:6px;"></i>proctoring overview · soft & secure</div>
+        </div>
+        <a href="{% url 'logout' %}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <!-- stats with fresh palette -->
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-title"><i class="fas fa-user-graduate"></i> Total students</div><div class="stat-number">{{ total_students }}</div></div>
+        <div class="stat-card"><div class="stat-title"><i class="fas fa-user-check"></i> Approved</div><div class="stat-number">{{ approved_students }}</div></div>
+        <div class="stat-card"><div class="stat-title"><i class="fas fa-clock"></i> Pending approvals</div><div class="stat-number">{{ pending_approvals }}</div></div>
+        <div class="stat-card"><div class="stat-title"><i class="fas fa-pencil-alt"></i> Total exams</div><div class="stat-number">{{ total_exams }}</div></div>
+        <div class="stat-card"><div class="stat-title"><i class="fas fa-hourglass-half"></i> Pending evaluations</div><div class="stat-number">{{ pending_evaluations }}</div></div>
+        <div class="stat-card"><div class="stat-title"><i class="fas fa-check-double"></i> Evaluated papers</div><div class="stat-number">{{ evaluated_attempts }}</div></div>
+    </div>
+
+    <!-- Quick actions (modern cards) -->
+    <div class="section">
+        <div class="section-header">
+            <i class="fas fa-bolt"></i>
+            <div class="section-title">Quick actions <span>6 shortcuts</span></div>
+        </div>
+        <div class="quick-actions">
+            <a href="{% url 'exam_paper_create' %}" class="action-card"><i class="fas fa-plus-circle"></i> Create exam</a>
+            <a href="{% url 'exam_paper_list' %}" class="action-card"><i class="fas fa-list-ul"></i> Manage exams</a>
+            <a href="{% url 'student_approval_list' %}" class="action-card"><i class="fas fa-user-check"></i> Approve students</a>
+            <a href="{% url 'pending_evaluations_list' %}" class="action-card"><i class="fas fa-pen"></i> Evaluate answers</a>
+            <a href="{% url 'results_management' %}" class="action-card"><i class="fas fa-chart-bar"></i> Manage results</a>
+            <a href="{% url 'admin_dashboard' %}" class="action-card"><i class="fas fa-archive"></i> Old dashboard</a>
+        </div>
+    </div>
+
+    <!-- pending approvals -->
+    <div class="section">
+        <div class="section-header">
+            <i class="fas fa-users"></i>
+            <div class="section-title">Pending student approvals <span>{{ pending_students|length|default:"0" }}</span></div>
+        </div>
+        {% if pending_students %}
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Student name</th><th>Email</th><th>Registered</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>{% for student in pending_students %}<tr><td>{{ student.name }}</td><td>{{ student.email }}</td><td>{{ student.timestamp|date:"M d, Y" }}</td><td><span class="badge badge-pending"><i class="fas fa-hourglass"></i> Pending</span></td><td><a href="{% url 'student_approval_list' %}" class="btn-sm"><i class="fas fa-clipboard-check"></i> Review</a></td></tr>{% endfor %}</tbody>
+            </table>
+        </div>
+        {% else %}<div class="empty-state"><i class="fas fa-check-circle"></i><br>✓ No pending student approvals</div>{% endif %}
+    </div>
+
+    <!-- upcoming exams -->
+    <div class="section">
+        <div class="section-header">
+            <i class="fas fa-calendar-alt"></i>
+            <div class="section-title">Upcoming exams <span>{{ upcoming_exams|length|default:"0" }}</span></div>
+        </div>
+        {% if upcoming_exams %}
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Exam title</th><th>Subject</th><th>Date & time</th><th>Duration</th><th></th></tr></thead>
+                <tbody>{% for exam in upcoming_exams %}<tr><td>{{ exam.title }}</td><td>{{ exam.subject }}</td><td>{{ exam.exam_date|date:"M d, Y H:i" }}</td><td>{{ exam.duration_minutes }} min</td><td><a href="{% url 'exam_paper_detail' exam.id %}" class="btn-sm"><i class="fas fa-eye"></i> View</a></td></tr>{% endfor %}</tbody>
+            </table>
+        </div>
+        {% else %}<div class="empty-state"><i class="fas fa-calendar-times"></i><br>📭 No upcoming exams scheduled</div>{% endif %}
+    </div>
+
+    <!-- subjective evaluations -->
+    <div class="section">
+        <div class="section-header">
+            <i class="fas fa-file-alt"></i>
+            <div class="section-title">Pending subjective evaluations <span>{{ pending_subjective|length|default:"0" }}</span></div>
+        </div>
+        {% if pending_subjective %}
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Student</th><th>Exam</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>{% for attempt in pending_subjective %}<tr><td>{{ attempt.student.name }}</td><td>{{ attempt.exam_paper.title }}</td><td>{{ attempt.submitted_at|date:"M d, Y H:i" }}</td><td><span class="badge badge-pending"><i class="fas fa-pen"></i> Needs evaluation</span></td><td><a href="{% url 'evaluate_subjective_answers' attempt.id %}" class="btn-sm"><i class="fas fa-check-double"></i> Evaluate</a></td></tr>{% endfor %}</tbody>
+            </table>
+        </div>
+        {% else %}<div class="empty-state"><i class="fas fa-smile"></i><br>✓ No pending evaluations</div>{% endif %}
+    </div>
+
+    <!-- ML proctoring reports (with rose pink / powder touches) -->
+    <div class="section">
+        <div class="section-header">
+            <i class="fas fa-robot"></i>
+            <div class="section-title">ML Proctoring reports <span>{{ proctoring_reports|length|default:"0" }}</span></div>
+        </div>
+        {% if proctoring_reports %}
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Student name</th><th>Latest exam</th><th>Status</th><th>Evidence</th><th style="min-width:120px;">Action</th></tr></thead>
+                <tbody>{% for report in proctoring_reports %}<tr>
+                    <td>{{ report.student.name }}</td>
+                    <td>{{ report.latest_exam }}</td>
+                    <td>{% if report.cheating_detected %}<span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> Suspicious</span>{% else %}<span class="badge badge-success"><i class="fas fa-shield-alt"></i> Clean</span>{% endif %}</td>
+                    <td class="evidence-icons">
+                        {% if report.has_images %}<i class="fas fa-camera" title="images captured"></i>{% endif %}
+                        {% if report.has_audio %}<i class="fas fa-microphone-alt" title="audio recording"></i>{% endif %}
+                        {% if not report.has_images and not report.has_audio %}—{% endif %}
+                    </td>
+                    <td><a href="{% url 'report_page' report.student.id %}" class="btn-sm"><i class="fas fa-chart-simple"></i> View report <i class="fas fa-chevron-right"></i></a></td>
+                </tr>{% endfor %}</tbody>
+            </table>
+        </div>
+        {% else %}<div class="empty-state"><i class="fas fa-video"></i><br>📭 No proctoring data available yet</div>{% endif %}
+    </div>
+
+    <!-- subtle footer note (design harmony) -->
+    <div style="margin-top: 30px; text-align: right; font-size: 13px; color: #c8b9ab; border-top: 1px solid #ecddcf; padding-top: 20px;">
+        <!-- <i class="fas fa-palette" style="color:#e9b6b1;"></i> powder blue · rose pink · light beige · light brown · grey -->
+    </div>
+</div>
+<!-- all interactions remain same – only UI enhanced -->
+</body>
+</html>
+
+
+<!-- http://127.0.0.1:8000/admin/dashboard-enhanced/ -->

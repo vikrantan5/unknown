@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam papers · FuturProctor</title>
+    <!-- Font Awesome 6 (free) for crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f0eb;  /* light beige background */
+            min-height: 100vh;
+            padding: 28px 24px;
+        }
+
+        /* main container – soft, elevated card */
+        .list-card {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 42px;
+            box-shadow: 0 30px 55px -15px rgba(80, 60, 40, 0.2);
+            padding: 36px 44px;
+            transition: all 0.2s;
+            border: 1px solid #f5e7dc;
+        }
+
+        /* header area */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .title-section h1 {
+            font-size: 34px;
+            font-weight: 600;
+            background: linear-gradient(145deg, #6d8f9f 0%, #9fb7c7 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .title-section h1 i {
+            background: none;
+            -webkit-text-fill-color: #e9b6b1; /* rose pink */
+            font-size: 38px;
+        }
+
+        .title-section p {
+            color: #a49282;  /* warm grey */
+            font-size: 16px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .title-section p i {
+            color: #b5c9d6; /* powder blue */
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 26px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: #f0e7de;
+            color: #5f5243;
+            border: 1px solid #ebdbcf;
+        }
+
+        .btn-outline i {
+            color: #6d8f9f;
+        }
+
+        .btn-outline:hover {
+            background: #e9b6b1;
+            border-color: #e9b6b1;
+            color: #2e2e2e;
+        }
+
+        .btn-primary {
+            background: #6d8f9f; /* powder blue */
+            color: white;
+            box-shadow: 0 8px 16px -8px #8dabb9;
+        }
+
+        .btn-primary i {
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #577b8c;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #e9b6b1; /* rose pink */
+            color: #2e2e2e;
+            box-shadow: 0 8px 16px -8px #e9b6b1;
+        }
+
+        .btn-success i {
+            color: #2e2e2e;
+        }
+
+        .btn-success:hover {
+            background: #dd9f99;
+            transform: translateY(-2px);
+        }
+
+        /* exam grid */
+        .exam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .exam-card {
+            background: #fefcf9;
+            border: 2px solid #f0e3d8;
+            border-radius: 28px;
+            padding: 24px 22px;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .exam-card:hover {
+            border-color: #e9b6b1;
+            box-shadow: 0 15px 25px -16px #b29688;
+            transform: translateY(-4px);
+        }
+
+        .exam-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4b3f34; /* light brown shade */
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .exam-subject {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6d8f9f; /* powder blue */
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 16px;
+            background: #f0e7de;
+            padding: 6px 14px;
+            border-radius: 40px;
+            width: fit-content;
+        }
+
+        .exam-subject i {
+            color: #e9b6b1;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #6d5d4e;
+            margin-bottom: 8px;
+        }
+
+        .detail-row i {
+            width: 22px;
+            color: #b5c9d6; /* powder blue */
+            font-size: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 14px;
+            align-self: flex-start;
+        }
+
+        .badge-active {
+            background: #e1f0e5;
+            color: #2d6a4f;
+            border-left: 4px solid #6d8f9f;
+        }
+
+        .badge-inactive {
+            background: #ffe4e1;
+            color: #b13e3e;
+            border-left: 4px solid #e9b6b1;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            border-top: 1px solid #f0e3d8;
+            padding-top: 18px;
+        }
+
+        .btn-card {
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 40px;
+            background: #f0e7de;
+            color: #5f5243;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: 0.15s;
+            border: 1px solid #ebdbcf;
+        }
+
+        .btn-card i {
+            color: #6d8f9f;
+        }
+
+        .btn-card:hover {
+            background: #e9b6b1;
+            border-color: #e9b6b1;
+            color: #2e2e2e;
+        }
+
+        .btn-card:hover i {
+            color: #2e2e2e;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 30px;
+            background: #fcf8f4;
+            border-radius: 58px;
+            border: 2px dashed #d9c8b8;
+            margin-top: 20px;
+        }
+
+        .empty-state i {
+            font-size: 68px;
+            color: #e9b6b1;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h2 {
+            font-size: 28px;
+            color: #6d5d4e;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: #a39587;
+            margin-bottom: 26px;
+        }
+
+        .btn-empty {
+            background: #e9b6b1;
+            color: #2e2e2e;
+            padding: 14px 38px;
+            border-radius: 60px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 14px -8px #e9b6b1;
+        }
+
+        .btn-empty:hover {
+            background: #dd9f99;
+            transform: scale(1.02);
+        }
+
+        /* footer note */
+        .footer-note {
+            margin-top: 40px;
+            text-align: right;
+            color: #c8b9ab;
+            font-size: 13px;
+            border-top: 1px solid #f0e3d8;
+            padding-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-note span i {
+            color: #e9b6b1;
+        }
+    </style>
+</head>
+<body>
+<div class="list-card">
+    <!-- page header -->
+    <div class="page-header">
+        <div class="title-section">
+            <h1><i class="fas fa-folder-open"></i> Exam papers</h1>
+            <p><i class="fas fa-archive"></i> Manage all exam papers in one place</p>
+        </div>
+        <div class="action-buttons">
+            <a href="{% url 'admin_dashboard_enhanced' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Dashboard</a>
+            <a href="{% url 'exam_paper_create' %}" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create new exam</a>
+        </div>
+    </div>
+
+    <!-- exam grid / list -->
+    {% if exam_papers %}
+        <div class="exam-grid">
+            {% for exam in exam_papers %}
+            <div class="exam-card">
+                <div class="exam-title">{{ exam.title }}</div>
+                <div class="exam-subject"><i class="fas fa-book"></i> {{ exam.subject }}</div>
+                <div class="detail-row"><i class="fas fa-calendar-alt"></i> {{ exam.exam_date|date:"M d, Y H:i" }}</div>
+                <div class="detail-row"><i class="fas fa-hourglass-half"></i> {{ exam.duration_minutes }} min</div>
+                <div class="detail-row"><i class="fas fa-star"></i> {{ exam.total_marks }} marks · pass {{ exam.passing_marks }}</div>
+                <div class="detail-row"><i class="fas fa-list-ol"></i> {{ exam.questions.count }} question{{ exam.questions.count|pluralize }}</div>
+                {% if exam.is_active %}
+                    <span class="badge badge-active"><i class="fas fa-check-circle"></i> Active</span>
+                {% else %}
+                    <span class="badge badge-inactive"><i class="fas fa-ban"></i> Inactive</span>
+                {% endif %}
+                <div class="card-actions">
+                    <a href="{% url 'exam_paper_detail' exam.id %}" class="btn-card"><i class="fas fa-eye"></i> View</a>
+                    <a href="{% url 'exam_paper_edit' exam.id %}" class="btn-card"><i class="fas fa-pen"></i> Edit</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- empty state with style -->
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <h2>📭 No exam papers yet</h2>
+            <p>Create your first exam paper to get started with proctoring.</p>
+            <a href="{% url 'exam_paper_create' %}" class="btn-empty"><i class="fas fa-plus-circle"></i> Create exam</a>
+        </div>
+    {% endif %}
+
+    <!-- subtle footer with colour palette -->
+    <div class="footer-note">
+        <!-- <span><i class="fas fa-palette"></i> powder blue · rose pink · light beige · light brown · grey</span> -->
+        <span><i class="fas fa-graduation-cap" style="color:#e9b6b1;"></i> FuturProctor</span>
+    </div>
+</div>
+<!-- all original functionality and links remain unchanged – only ui enhanced with given colours -->
+</body>
+</html>

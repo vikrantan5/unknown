@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit question · FuturProctor</title>
+    <!-- Font Awesome 6 (free) for crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f0eb;  /* light beige background */
+            min-height: 100vh;
+            padding: 28px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* main container – soft, elevated card */
+        .edit-question-card {
+            max-width: 820px;
+            width: 100%;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 42px;
+            box-shadow: 0 30px 55px -15px rgba(80, 60, 40, 0.25);
+            padding: 40px 48px;
+            transition: all 0.2s;
+            border: 1px solid #f5e7dc;
+        }
+
+        /* header area */
+        .header-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .header-area h1 {
+            font-size: 32px;
+            font-weight: 600;
+            background: linear-gradient(145deg, #6d8f9f 0%, #9fb7c7 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-area h1 i {
+            background: none;
+            -webkit-text-fill-color: #e9b6b1; /* rose pink */
+            font-size: 36px;
+        }
+
+        .type-badge {
+            background: #f0e7de;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: #5f5243;
+            font-weight: 500;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            border: 1px solid #ebdbcf;
+        }
+
+        .type-badge i {
+            color: #6d8f9f; /* powder blue */
+        }
+
+        /* form layout */
+        .edit-form {
+            margin-top: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px 28px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #6d5d4e; /* light brown shade */
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.02em;
+        }
+
+        .form-group label i {
+            color: #e9b6b1;
+            font-size: 16px;
+            width: 20px;
+        }
+
+        /* special icon colors for variety */
+        .form-group:nth-child(1) label i,
+        .form-group:nth-child(4) label i {
+            color: #6d8f9f;  /* powder blue */
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #f0e3d8;
+            border-radius: 26px;
+            font-size: 15px;
+            background: #fffcf9;
+            transition: 0.2s;
+            color: #3e3a36;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #e9b6b1;  /* rose pink focus */
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(233, 182, 177, 0.2);
+            background: #ffffff;
+        }
+
+        .form-group input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .form-group input[type="number"]::-webkit-outer-spin-button,
+        .form-group input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* options section – with soft background for MCQ block */
+        .options-section {
+            background: #fcf8f4;
+            border-radius: 32px;
+            padding: 24px 28px;
+            margin: 24px 0 18px;
+            border: 1px solid #efe4d8;
+            grid-column: span 2;
+        }
+
+        .section-label {
+            font-weight: 600;
+            color: #4b3f34;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+        }
+
+        .section-label i {
+            color: #e9b6b1;
+        }
+
+        /* inner grid for mcq options */
+        .mcq-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .full-width-select {
+            grid-column: span 2;
+        }
+
+        /* hint text */
+        .hint {
+            font-size: 12px;
+            color: #b8a898;
+            margin-left: 16px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .hint i {
+            color: #b5c9d6;
+        }
+
+        /* button group */
+        .button-group {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 34px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: #6d8f9f; /* powder blue */
+            color: white;
+            box-shadow: 0 8px 16px -8px #8dabb9;
+        }
+
+        .btn-primary i {
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #577b8c;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e9b6b1; /* rose pink */
+            color: #2e2e2e;
+            box-shadow: 0 8px 16px -8px #e9b6b1;
+        }
+
+        .btn-secondary:hover {
+            background: #dd9f99;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 2px solid #d9c8b8;
+            color: #6d5d4e;
+            box-shadow: none;
+        }
+
+        .btn-cancel:hover {
+            background: #f0e7de;
+            border-color: #cbb09b;
+            color: #4f3f31;
+        }
+
+        /* footer note */
+        .footer-note {
+            margin-top: 40px;
+            text-align: right;
+            color: #c8b9ab;
+            font-size: 13px;
+            border-top: 1px solid #f0e3d8;
+            padding-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-note span i {
+            color: #e9b6b1;
+        }
+
+        /* responsive */
+        @media (max-width: 700px) {
+            .edit-question-card { padding: 30px 24px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+            .options-section { grid-column: span 1; }
+            .mcq-grid { grid-template-columns: 1fr; }
+            .full-width-select { grid-column: span 1; }
+            .button-group { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="edit-question-card">
+    <!-- header -->
+    <div class="header-area">
+        <h1><i class="fas fa-pen-to-square"></i> Edit question</h1>
+    </div>
+    <div class="type-badge">
+        <i class="fas {% if question.question_type == 'mcq' %}fa-check-square{% else %}fa-pen{% endif %}"></i>
+        {{ question.get_question_type_display }}
+    </div>
+
+    <!-- main form -->
+    <form method="post" class="edit-form">
+        {% csrf_token %}
+
+        <div class="form-grid">
+            <!-- question text (full width) -->
+            <div class="form-group full-width">
+                <label><i class="fas fa-question-circle"></i> Question text <span style="color:#e9b6b1;">*</span></label>
+                <textarea name="question_text" required>{{ question.question_text }}</textarea>
+            </div>
+
+            <!-- marks and order side by side -->
+            <div class="form-group">
+                <label><i class="fas fa-star"></i> Marks <span style="color:#e9b6b1;">*</span></label>
+                <input type="number" name="marks" value="{{ question.marks }}" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-list-ol"></i> Order/sequence <span style="color:#e9b6b1;">*</span></label>
+                <input type="number" name="order" value="{{ question.order }}" required>
+                <div class="hint"><i class="fas fa-arrow-up-wide-short"></i> display order</div>
+            </div>
+        </div>
+
+        <!-- conditional: MCQ or subjective -->
+        {% if question.question_type == 'mcq' %}
+        <div class="options-section">
+            <div class="section-label"><i class="fas fa-check-square"></i> MCQ options</div>
+            <div class="mcq-grid">
+                <div class="form-group"><label>Option A *</label><input type="text" name="option_a" value="{{ question.option_a }}" required></div>
+                <div class="form-group"><label>Option B *</label><input type="text" name="option_b" value="{{ question.option_b }}" required></div>
+                <div class="form-group"><label>Option C *</label><input type="text" name="option_c" value="{{ question.option_c }}" required></div>
+                <div class="form-group"><label>Option D *</label><input type="text" name="option_d" value="{{ question.option_d }}" required></div>
+                <div class="form-group full-width-select">
+                    <label>Correct answer *</label>
+                    <select name="correct_answer" required>
+                        <option value="A" {% if question.correct_answer == 'A' %}selected{% endif %}>A</option>
+                        <option value="B" {% if question.correct_answer == 'B' %}selected{% endif %}>B</option>
+                        <option value="C" {% if question.correct_answer == 'C' %}selected{% endif %}>C</option>
+                        <option value="D" {% if question.correct_answer == 'D' %}selected{% endif %}>D</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="options-section">
+            <div class="section-label"><i class="fas fa-pen"></i> Subjective answer</div>
+            <div class="form-group">
+                <label>Model answer <span style="color:#e9b6b1;">*</span></label>
+                <textarea name="model_answer" required rows="6">{{ question.model_answer }}</textarea>
+                <div class="hint"><i class="fas fa-robot"></i> used for AI evaluation</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- action buttons -->
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-check-circle"></i> Update question</button>
+            <a href="{% url 'exam_paper_detail' exam_paper.id %}" class="btn btn-cancel"><i class="fas fa-times"></i> Cancel</a>
+        </div>
+    </form>
+
+    <!-- footer note -->
+    <div class="footer-note">
+        <!-- <span><i class="fas fa-palette"></i> powder blue · rose pink · light beige · light brown · grey</span> -->
+        <span><i class="fas fa-graduation-cap" style="color:#e9b6b1;"></i> FuturProctor</span>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results management · FuturProctor</title>
+    <!-- Font Awesome 6 (free) for crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f0eb;  /* light beige background */
+            min-height: 100vh;
+            padding: 28px 24px;
+        }
+
+        /* main container – soft, elevated card */
+        .results-card {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 42px;
+            box-shadow: 0 30px 55px -15px rgba(80, 60, 40, 0.2);
+            padding: 36px 44px;
+            transition: all 0.2s;
+            border: 1px solid #f5e7dc;
+        }
+
+        /* header area */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .title-section h1 {
+            font-size: 34px;
+            font-weight: 600;
+            background: linear-gradient(145deg, #6d8f9f 0%, #9fb7c7 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .title-section h1 i {
+            background: none;
+            -webkit-text-fill-color: #e9b6b1; /* rose pink */
+            font-size: 38px;
+        }
+
+        .title-section p {
+            color: #a49282;  /* warm grey */
+            font-size: 16px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .title-section p i {
+            color: #b5c9d6; /* powder blue */
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: #f0e7de;
+            color: #5f5243;
+            border: 1px solid #ebdbcf;
+        }
+
+        .btn-outline i {
+            color: #6d8f9f;
+        }
+
+        .btn-outline:hover {
+            background: #e9b6b1;
+            border-color: #e9b6b1;
+            color: #2e2e2e;
+        }
+
+        .btn-outline:hover i {
+            color: #2e2e2e;
+        }
+
+        /* section titles */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 40px 0 22px 0;
+        }
+
+        .section-title i {
+            font-size: 28px;
+            background: #f0e7de;
+            padding: 10px;
+            border-radius: 20px;
+            color: #6d8f9f;
+        }
+
+        .section-title h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4b3f34;
+        }
+
+        .section-title span {
+            background: #e9b6b1;
+            color: #2e2e2e;
+            font-size: 14px;
+            padding: 4px 16px;
+            border-radius: 30px;
+            margin-left: 12px;
+        }
+
+        /* table styles */
+        .table-wrapper {
+            border-radius: 28px;
+            background: #fefcf9;
+            border: 1px solid #f0e3d8;
+            overflow-x: auto;
+            margin: 16px 0 24px;
+            box-shadow: 0 6px 14px -12px #b8a898;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            text-align: left;
+            padding: 20px 22px;
+            background: #fff9f5;
+            font-weight: 600;
+            font-size: 14px;
+            color: #6d5d4e;
+            border-bottom: 2px solid #e9d9cd;
+        }
+
+        td {
+            padding: 18px 22px;
+            border-bottom: 1px solid #f2e4d9;
+            color: #3e3a36;
+            font-size: 15px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #fdf3ed;
+        }
+
+        /* badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-published {
+            background: #e1f0e5;
+            color: #2d6a4f;
+            border-left: 4px solid #6d8f9f;
+        }
+
+        .badge-pending {
+            background: #fdeee8;
+            color: #aa7845;
+            border-left: 4px solid #e9b6b1;
+        }
+
+        .grade-badge {
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .grade-a { background: #e1f0e5; color: #2d6a4f; border-left: 4px solid #6d8f9f; }
+        .grade-b { background: #d1ecf1; color: #0c5460; border-left: 4px solid #6d8f9f; }
+        .grade-c { background: #fde6d2; color: #aa7845; border-left: 4px solid #e9b6b1; }
+        .grade-f { background: #ffe4e1; color: #b13e3e; border-left: 4px solid #e9b6b1; }
+
+        .email-sent {
+            color: #2d6a4f;
+            background: #e1f0e5;
+            padding: 6px 12px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .email-failed {
+            color: #b13e3e;
+            background: #ffe4e1;
+            padding: 6px 12px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* action button inside table */
+        .btn-publish {
+            background: #6d8f9f; /* powder blue */
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.15s;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .btn-publish i {
+            color: white;
+        }
+
+        .btn-publish:hover {
+            background: #577b8c;
+            transform: translateY(-2px);
+        }
+
+        /* empty state */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background: #fcf8f4;
+            border-radius: 42px;
+            border: 1px dashed #d9c8b8;
+            color: #a39587;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            color: #e9b6b1;
+            margin-bottom: 12px;
+        }
+
+        /* footer note */
+        .footer-note {
+            margin-top: 48px;
+            text-align: right;
+            color: #c8b9ab;
+            font-size: 13px;
+            border-top: 1px solid #f0e3d8;
+            padding-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-note span i {
+            color: #e9b6b1;
+        }
+    </style>
+</head>
+<body>
+<div class="results-card">
+    <!-- header -->
+    <div class="page-header">
+        <div class="title-section">
+            <h1><i class="fas fa-chart-simple"></i> Results management</h1>
+            <p><i class="fas fa-file-lines"></i> Pending and published exam results</p>
+        </div>
+        <a href="{% url 'admin_dashboard_enhanced' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Dashboard</a>
+    </div>
+
+    <!-- Unpublished results section -->
+    <div class="section-title">
+        <i class="fas fa-clock"></i>
+        <h2>Unpublished results <span>{{ unpublished_attempts|length|default:"0" }}</span></h2>
+    </div>
+
+    {% if unpublished_attempts %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Exam</th>
+                        <th>Subject</th>
+                        <th>Marks</th>
+                        <th>Percentage</th>
+                        <th>Submitted</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attempt in unpublished_attempts %}
+                    <tr>
+                        <td><i class="fas fa-user-graduate" style="color:#6d8f9f; margin-right:6px;"></i> {{ attempt.student.name }}</td>
+                        <td>{{ attempt.exam_paper.title }}</td>
+                        <td><span style="background:#f0e7de; padding:4px 10px; border-radius:40px;">{{ attempt.exam_paper.subject }}</span></td>
+                        <td><strong>{{ attempt.total_marks_obtained }}</strong> / {{ attempt.exam_paper.total_marks }}</td>
+                        <td><span class="badge badge-pending">{{ attempt.percentage|floatformat:2 }}%</span></td>
+                        <td><i class="fas fa-calendar-day" style="color:#b5c9d6; margin-right:4px;"></i> {{ attempt.submitted_at|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'publish_result' attempt.id %}" class="btn-publish"><i class="fas fa-bullhorn"></i> Publish</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-check-circle"></i>
+            <p>No unpublished results – all caught up!</p>
+        </div>
+    {% endif %}
+
+    <!-- Published results section -->
+    <div class="section-title" style="margin-top: 48px;">
+        <i class="fas fa-check-double"></i>
+        <h2>Published results <span>{{ published_results|length|default:"0" }}</span></h2>
+    </div>
+
+    {% if published_results %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Exam</th>
+                        <th>Subject</th>
+                        <th>Marks</th>
+                        <th>Percentage</th>
+                        <th>Grade</th>
+                        <th>Published</th>
+                        <th>Email sent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in published_results %}
+                    <tr>
+                        <td><i class="fas fa-user-graduate" style="color:#6d8f9f;"></i> {{ result.attempt.student.name }}</td>
+                        <td>{{ result.attempt.exam_paper.title }}</td>
+                        <td><span style="background:#f0e7de; padding:4px 10px; border-radius:40px;">{{ result.attempt.exam_paper.subject }}</span></td>
+                        <td><strong>{{ result.marks_obtained }}</strong> / {{ result.total_marks }}</td>
+                        <td><span class="badge badge-published">{{ result.percentage|floatformat:2 }}%</span></td>
+                        <td>
+                            <span class="grade-badge 
+                                {% if result.grade|slice:':1' == 'A' %}grade-a
+                                {% elif result.grade|slice:':1' == 'B' %}grade-b
+                                {% elif result.grade|slice:':1' == 'C' %}grade-c
+                                {% else %}grade-f{% endif %}">
+                                {{ result.grade }}
+                            </span>
+                        </td>
+                        <td><i class="fas fa-calendar-check" style="color:#6d8f9f;"></i> {{ result.published_at|date:"M d, Y H:i" }}</td>
+                        <td>
+                            {% if result.email_sent %}
+                                <span class="email-sent"><i class="fas fa-check-circle"></i> Sent</span>
+                            {% else %}
+                                <span class="email-failed"><i class="fas fa-exclamation-circle"></i> Failed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>No published results yet – results will appear here after publication.</p>
+        </div>
+    {% endif %}
+
+    <!-- footer note -->
+    <div class="footer-note">
+        <!-- <span><i class="fas fa-palette"></i> powder blue · rose pink · light beige · light brown · grey</span> -->
+        <span><i class="fas fa-graduation-cap" style="color:#e9b6b1;"></i> FuturProctor</span>
+    </div>
+</div>
+</body>
+</html>

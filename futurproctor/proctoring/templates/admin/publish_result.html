@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publish result · FuturProctor</title>
+    <!-- Font Awesome 6 (free) for crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f0eb;  /* light beige background */
+            min-height: 100vh;
+            padding: 28px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* main container – soft, elevated card */
+        .publish-detailed-card {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 42px;
+            box-shadow: 0 30px 55px -15px rgba(80, 60, 40, 0.25);
+            padding: 40px 44px;
+            transition: all 0.2s;
+            border: 1px solid #f5e7dc;
+        }
+
+        /* header area */
+        .header-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .header-area h1 {
+            font-size: 34px;
+            font-weight: 600;
+            background: linear-gradient(145deg, #6d8f9f 0%, #9fb7c7 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-area h1 i {
+            background: none;
+            -webkit-text-fill-color: #e9b6b1; /* rose pink */
+            font-size: 38px;
+        }
+
+        .subtitle {
+            color: #a49282;
+            font-size: 16px;
+            margin-left: 54px;
+            margin-top: -8px;
+            margin-bottom: 16px;
+        }
+
+        /* summary box */
+        .summary-panel {
+            background: #fefcf9;
+            border: 2px solid #f0e3d8;
+            border-radius: 32px;
+            padding: 28px 30px;
+            margin: 24px 0 32px;
+        }
+
+        .summary-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #4b3f34;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .summary-title i {
+            color: #e9b6b1;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+        }
+
+        .summary-item {
+            background: #fcf8f4;
+            border-radius: 24px;
+            padding: 18px 16px;
+            text-align: center;
+            border: 1px solid #efe4d8;
+        }
+
+        .summary-label {
+            font-size: 13px;
+            color: #9b8b7a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .summary-label i {
+            color: #6d8f9f; /* powder blue */
+        }
+
+        .summary-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: #4b3f34;
+            line-height: 1.2;
+        }
+
+        .summary-value small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #8f7f6e;
+        }
+
+        /* table styles */
+        .table-wrapper {
+            border-radius: 28px;
+            background: #fefcf9;
+            border: 1px solid #f0e3d8;
+            overflow-x: auto;
+            margin: 28px 0;
+            box-shadow: 0 6px 14px -12px #b8a898;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th {
+            text-align: left;
+            padding: 18px 22px;
+            background: #fff9f5;
+            font-weight: 600;
+            font-size: 14px;
+            color: #6d5d4e;
+            border-bottom: 2px solid #e9d9cd;
+        }
+
+        td {
+            padding: 16px 22px;
+            border-bottom: 1px solid #f2e4d9;
+            color: #3e3a36;
+            font-size: 15px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #fdf3ed;
+        }
+
+        .status-correct {
+            color: #2d6a4f;
+            background: #e1f0e5;
+            padding: 6px 14px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-incorrect {
+            color: #b13e3e;
+            background: #ffe4e1;
+            padding: 6px 14px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-ai {
+            color: #1e4b5e;
+            background: #b5c9d6; /* powder blue tint */
+            padding: 6px 14px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* form elements */
+        .form-group {
+            margin: 28px 0 22px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 16px;
+            color: #6d5d4e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .form-group label i {
+            color: #e9b6b1;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 18px 22px;
+            border: 2px solid #f0e3d8;
+            border-radius: 26px;
+            font-size: 15px;
+            background: #fffcf9;
+            transition: 0.2s;
+            color: #3e3a36;
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            border-color: #e9b6b1;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(233, 182, 177, 0.2);
+            background: #ffffff;
+        }
+
+        /* warning note */
+        .warning-note {
+            background: #fdeee8;
+            border-left: 6px solid #e9b6b1;
+            border-radius: 26px;
+            padding: 20px 28px;
+            margin: 24px 0 28px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            color: #aa7845;
+            font-weight: 500;
+        }
+
+        .warning-note i {
+            font-size: 32px;
+            color: #e9b6b1;
+        }
+
+        /* button group */
+        .button-group {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 16px 34px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: #6d8f9f; /* powder blue */
+            color: white;
+            box-shadow: 0 8px 16px -8px #8dabb9;
+        }
+
+        .btn-primary i {
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #577b8c;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e9b6b1; /* rose pink */
+            color: #2e2e2e;
+            box-shadow: 0 8px 16px -8px #e9b6b1;
+        }
+
+        .btn-secondary:hover {
+            background: #dd9f99;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 2px solid #d9c8b8;
+            color: #6d5d4e;
+            box-shadow: none;
+        }
+
+        .btn-cancel:hover {
+            background: #f0e7de;
+            border-color: #cbb09b;
+            color: #4f3f31;
+        }
+
+        /* footer note */
+        .footer-note {
+            margin-top: 40px;
+            text-align: right;
+            color: #c8b9ab;
+            font-size: 13px;
+            border-top: 1px solid #f0e3d8;
+            padding-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-note span i {
+            color: #e9b6b1;
+        }
+
+        /* responsive */
+        @media (max-width: 650px) {
+            .publish-detailed-card { padding: 28px 20px; }
+            .button-group { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="publish-detailed-card">
+    <!-- header -->
+    <div class="header-area">
+        <h1><i class="fas fa-file-signature"></i> Publish final result</h1>
+    </div>
+    <div class="subtitle"><i class="fas fa-envelope-open-text" style="color:#e9b6b1;"></i> Review the breakdown before sending to student</div>
+
+    <!-- result summary box -->
+    <div class="summary-panel">
+        <div class="summary-title"><i class="fas fa-chart-pie"></i> Result summary</div>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <div class="summary-label"><i class="fas fa-user-graduate"></i> Student</div>
+                <div class="summary-value" style="font-size: 20px;">{{ attempt.student.name }}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label"><i class="fas fa-star"></i> Total marks</div>
+                <div class="summary-value">{{ attempt.exam_paper.total_marks }}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label"><i class="fas fa-medal"></i> Obtained</div>
+                <div class="summary-value">{{ attempt.total_marks_obtained }}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label"><i class="fas fa-percent"></i> Percentage</div>
+                <div class="summary-value">{{ attempt.percentage|floatformat:2 }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- answer breakdown table -->
+    <h3 style="margin: 32px 0 16px; display: flex; align-items: center; gap: 8px; color:#4b3f34;"><i class="fas fa-table-list" style="color:#e9b6b1;"></i> Answer breakdown</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Q#</th>
+                    <th>Question type</th>
+                    <th>Max marks</th>
+                    <th>Obtained</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for answer in all_answers %}
+                <tr>
+                    <td><strong>{{ answer.question.order }}</strong></td>
+                    <td>{{ answer.question.get_question_type_display }}</td>
+                    <td>{{ answer.question.marks }}</td>
+                    <td><span style="font-weight: 600;">{{ answer.marks_obtained }}</span></td>
+                    <td>
+                        {% if answer.question.question_type == 'mcq' %}
+                            {% if answer.is_correct %}
+                                <span class="status-correct"><i class="fas fa-check-circle"></i> Correct</span>
+                            {% else %}
+                                <span class="status-incorrect"><i class="fas fa-times-circle"></i> Incorrect</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="status-ai"><i class="fas fa-robot"></i> AI evaluated</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- publication form -->
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label><i class="fas fa-pen"></i> Admin remarks <span style="font-weight:400; color:#a49282;">(optional)</span></label>
+            <textarea name="remarks" placeholder="Add any remarks or feedback for the student..."></textarea>
+        </div>
+
+        <!-- warning note (rose pink accent) -->
+        <div class="warning-note">
+            <i class="fas fa-bell"></i>
+            <span><strong>⚠️ Email notification:</strong> Once published, the student will receive an email with their result and remarks.</span>
+        </div>
+
+        <!-- action buttons -->
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-check-circle"></i> Publish & send email</button>
+            <a href="{% url 'pending_evaluations_list' %}" class="btn btn-cancel"><i class="fas fa-times"></i> Cancel</a>
+        </div>
+    </form>
+
+    <!-- footer note with palette -->
+    <div class="footer-note">
+        <!-- <span><i class="fas fa-palette"></i> powder blue · rose pink · light beige · light brown · grey</span> -->
+        <span><i class="fas fa-graduation-cap" style="color:#e9b6b1;"></i> FuturProctor</span>
+    </div>
+</div>
+<!-- all original functionality remains unchanged – only ui enhanced with given colours -->
+</body>
+</html>

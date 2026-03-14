@@ -1,0 +1,859 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FuturProctor · Student Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #a855f7;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            min-height: 100vh;
+            color: var(--light);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            bottom: -10%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: var(--secondary);
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        .orb-3 {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: var(--accent);
+            animation: float 30s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(5%, 5%) scale(1.1); }
+            50% { transform: translate(-5%, 10%) scale(0.9); }
+            75% { transform: translate(-10%, -5%) scale(1.05); }
+        }
+
+        /* Main Container */
+        .dashboard {
+            position: relative;
+            z-index: 1;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Glassmorphism Base */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 32px;
+            margin-bottom: 32px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0.5;
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .welcome-section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .greeting {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #fff, var(--gray));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .greeting i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem;
+        }
+
+        .welcome-subtitle {
+            color: var(--gray);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .welcome-subtitle i {
+            color: var(--success);
+            font-size: 0.8rem;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Approval Banner */
+        .approval-banner {
+            padding: 24px 32px;
+            margin-bottom: 32px;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .banner-icon {
+            font-size: 2.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .banner-content {
+            flex: 1;
+        }
+
+        .banner-content h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .banner-content p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .banner-pending {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .banner-pending .banner-icon {
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .banner-approved {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .banner-approved .banner-icon {
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .banner-rejected {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .banner-rejected .banner-icon {
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 28px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card:nth-child(1) .stat-icon { color: var(--primary); }
+        .stat-card:nth-child(2) .stat-icon { color: var(--success); }
+        .stat-card:nth-child(3) .stat-icon { color: var(--secondary); }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+            background: linear-gradient(135deg, #fff, var(--gray));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Section Titles */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+        }
+
+        .section-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        /* Quick Actions Grid */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .action-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 28px;
+            text-decoration: none;
+            color: var(--light);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.3);
+        }
+
+        .action-card:hover::before {
+            opacity: 1;
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 22px;
+            border: 1px solid var(--border);
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .action-desc {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .action-arrow {
+            color: var(--primary);
+            font-size: 1.2rem;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s;
+        }
+
+        .action-card:hover .action-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Results Container */
+        .results-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        /* Table Styles */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 24px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            text-align: left;
+            padding: 16px 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        table td {
+            padding: 20px;
+            font-size: 0.95rem;
+            color: var(--light);
+            border-bottom: 1px solid var(--border);
+        }
+
+        table tbody tr {
+            transition: all 0.2s;
+        }
+
+        table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Grade Badges */
+        .grade-badge {
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        .grade-a {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .grade-b {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .grade-c {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .grade-f {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--light);
+        }
+
+        .empty-desc {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        /* View All Button */
+        .view-all-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            margin-top: 24px;
+        }
+
+        .view-all-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 16px;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .greeting {
+                font-size: 1.5rem;
+                justify-content: center;
+            }
+
+            .approval-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 24px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .action-card {
+                padding: 20px;
+            }
+
+            table td {
+                padding: 12px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard > * {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .stats-grid > *:nth-child(1) { animation-delay: 0.1s; }
+        .stats-grid > *:nth-child(2) { animation-delay: 0.2s; }
+        .stats-grid > *:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="dashboard-header" data-testid="dashboard-header">
+            <div class="welcome-section">
+                <div class="greeting">
+                    <i class="fas fa-meteor"></i>
+                    Welcome back, {{ student.name }}
+                </div>
+                <div class="welcome-subtitle">
+                    <i class="fas fa-circle"></i>
+                    Student Dashboard · {{ current_time|default:"Ready for exams" }}
+                </div>
+            </div>
+            <a href="{% url 'logout' %}" class="logout-btn" data-testid="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sign Out</span>
+            </a>
+        </header>
+
+        <!-- Approval Status Banner -->
+        {% if approval_status == 'pending' %}
+            <div class="approval-banner banner-pending" data-testid="approval-banner-pending">
+                <div class="banner-icon">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="banner-content">
+                    <h2>Account Pending Review</h2>
+                    <p>Your registration is being verified by our team. You'll get full access once approved.</p>
+                </div>
+            </div>
+        {% elif approval_status == 'approved' %}
+            <div class="approval-banner banner-approved" data-testid="approval-banner-approved">
+                <div class="banner-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="banner-content">
+                    <h2>Account Verified ✓</h2>
+                    <p>Your account is fully approved. You can now access all exams and features.</p>
+                </div>
+            </div>
+        {% elif approval_status == 'rejected' %}
+            <div class="approval-banner banner-rejected" data-testid="approval-banner-rejected">
+                <div class="banner-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="banner-content">
+                    <h2>Account Not Verified</h2>
+                    <p>Please contact our support team for assistance with your account verification.</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card" data-testid="stat-total-attempts">
+                <div class="stat-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="stat-label">Total Attempts</div>
+                <div class="stat-value">{{ total_attempts }}</div>
+            </div>
+            <div class="stat-card" data-testid="stat-completed-exams">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-label">Completed Exams</div>
+                <div class="stat-value">{{ completed_exams }}</div>
+            </div>
+            <!-- <div class="stat-card" data-testid="stat-available-exams">
+                <div class="stat-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="stat-label">Available Exams</div>
+                <div class="stat-value">{{ available_exams_count }}</div>
+            </div> -->
+        </div>
+
+        <!-- Quick Actions -->
+        {% if approval_status == 'approved' %}
+        <div class="section-header">
+            <h2 class="section-title" data-testid="quick-actions-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </h2>
+            <span class="section-badge">{{ available_exams_count }} Available</span>
+        </div>
+        
+        <div class="quick-actions">
+            <a href="{% url 'available_exams' %}" class="action-card" data-testid="view-exams-btn">
+                <div class="action-icon">
+                    <i class="fas fa-list-alt"></i>
+                </div>
+                <div class="action-content">
+                    <div class="action-title">Available Exams</div>
+                    <div class="action-desc">Browse and start new exams</div>
+                </div>
+                <div class="action-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+            <a href="{% url 'student_results' %}" class="action-card" data-testid="my-results-btn">
+                <div class="action-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="action-content">
+                    <div class="action-title">My Results</div>
+                    <div class="action-desc">View your performance analytics</div>
+                </div>
+                <div class="action-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Recent Results -->
+        <div class="results-container">
+            <div class="section-header">
+                <h2 class="section-title" data-testid="recent-results-title">
+                    <i class="fas fa-trophy"></i>
+                    Recent Results
+                </h2>
+                {% if recent_results %}
+                    <span class="section-badge">{{ recent_results|length }} Results</span>
+                {% endif %}
+            </div>
+
+            {% if recent_results %}
+                <div class="table-wrapper" data-testid="results-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Exam</th>
+                                <th>Subject</th>
+                                <th>Marks</th>
+                                <th>Percentage</th>
+                                <th>Grade</th>
+                                <th>Published</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in recent_results %}
+                            <tr data-testid="result-row-{{ forloop.counter }}">
+                                <td>{{ result.attempt.exam_paper.title }}</td>
+                                <td>{{ result.attempt.exam_paper.subject }}</td>
+                                <td>{{ result.marks_obtained }} / {{ result.total_marks }}</td>
+                                <td>{{ result.percentage|floatformat:2 }}%</td>
+                                <td>
+                                    <span class="grade-badge 
+                                        {% if result.grade|slice:':1' == 'A' %}grade-a
+                                        {% elif result.grade|slice:':1' == 'B' %}grade-b
+                                        {% elif result.grade|slice:':1' == 'C' %}grade-c
+                                        {% else %}grade-f{% endif %}" 
+                                        data-testid="grade-badge">
+                                        {{ result.grade }}
+                                    </span>
+                                </td>
+                                <td>{{ result.published_at|date:"M d, Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="text-align: center;">
+                    <a href="{% url 'student_results' %}" class="view-all-btn" data-testid="view-all-results-btn">
+                        <span>View All Results</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            {% else %}
+                <div class="empty-state" data-testid="empty-results-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="empty-title">No Results Yet</div>
+                    <div class="empty-desc">Complete your first exam to see your results here</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Add smooth entrance animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add any dynamic interactions here
+            console.log('Dashboard ready');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,687 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Results · FuturProctor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #a855f7;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            min-height: 100vh;
+            color: var(--light);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            bottom: -10%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: var(--secondary);
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        .orb-3 {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: var(--accent);
+            animation: float 30s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(5%, 5%) scale(1.1); }
+            50% { transform: translate(-5%, 10%) scale(0.9); }
+            75% { transform: translate(-10%, -5%) scale(1.05); }
+        }
+
+        /* Main Container */
+        .dashboard {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Glassmorphism Base */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Header */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 32px;
+            margin-bottom: 32px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0.5;
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .title-section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .title-section h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #fff, var(--gray));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title-section h1 i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem;
+        }
+
+        .title-subtitle {
+            color: var(--gray);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            color: var(--light);
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateX(-4px);
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Section Styles */
+        .section {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.6rem;
+        }
+
+        .section-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        /* Table Styles */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            text-align: left;
+            padding: 18px 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        table td {
+            padding: 18px 20px;
+            font-size: 0.95rem;
+            color: var(--light);
+            border-bottom: 1px solid var(--border);
+        }
+
+        table tbody tr {
+            transition: all 0.2s;
+        }
+
+        table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-pending i {
+            margin-right: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* Grade Badges */
+        .grade-badge {
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .grade-a {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .grade-b {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .grade-c {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .grade-f {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Action Button */
+        .btn {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: var(--light);
+            padding: 8px 16px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn i {
+            font-size: 0.8rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--light);
+        }
+
+        .empty-desc {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        /* Stats Cards */
+        .stats-mini {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-mini-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-mini-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .stat-mini-content h4 {
+            font-size: 0.85rem;
+            color: var(--gray);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .stat-mini-content .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.2s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 16px;
+            }
+
+            .results-header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .title-section h1 {
+                font-size: 1.5rem;
+                justify-content: center;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            table th,
+            table td {
+                padding: 12px;
+            }
+
+            .stats-mini {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="dashboard">
+        <!-- Header -->
+        <div class="results-header">
+            <div class="title-section">
+                <h1>
+                    <i class="fas fa-chart-simple"></i>
+                    My Results
+                </h1>
+                <div class="title-subtitle">
+                    <i class="fas fa-circle" style="color: var(--success); font-size: 0.5rem;"></i>
+                    Track your academic performance
+                </div>
+            </div>
+            <a href="{% url 'student_dashboard_enhanced' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-mini">
+            <div class="stat-mini-card">
+                <div class="stat-mini-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-mini-content">
+                    <h4>Pending</h4>
+                    <div class="stat-value">{{ pending_attempts|length }}</div>
+                </div>
+            </div>
+            <div class="stat-mini-card">
+                <div class="stat-mini-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-mini-content">
+                    <h4>Completed</h4>
+                    <div class="stat-value">{{ published_results|length }}</div>
+                </div>
+            </div>
+            <div class="stat-mini-card">
+                <div class="stat-mini-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-mini-content">
+                    <h4>Avg. Grade</h4>
+                    <div class="stat-value">{{ average_grade|default:"—" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Evaluations -->
+        {% if pending_attempts %}
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-hourglass-half"></i>
+                    Pending Evaluations
+                </h2>
+                <span class="section-badge">{{ pending_attempts|length }} pending</span>
+            </div>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Exam</th>
+                            <th>Subject</th>
+                            <th>Submitted</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attempt in pending_attempts %}
+                        <tr>
+                            <td>{{ attempt.exam_paper.title }}</td>
+                            <td>{{ attempt.exam_paper.subject }}</td>
+                            <td>{{ attempt.submitted_at|date:"M d, Y H:i" }}</td>
+                            <td>
+                                <span class="badge badge-pending">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    Under Evaluation
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Published Results -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-trophy"></i>
+                    Published Results
+                </h2>
+                {% if published_results %}
+                    <span class="section-badge">{{ published_results|length }} results</span>
+                {% endif %}
+            </div>
+            
+            {% if published_results %}
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Exam</th>
+                                <th>Subject</th>
+                                <th>Marks</th>
+                                <th>Percentage</th>
+                                <th>Grade</th>
+                                <th>Published</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in published_results %}
+                            <tr>
+                                <td>{{ result.attempt.exam_paper.title }}</td>
+                                <td>{{ result.attempt.exam_paper.subject }}</td>
+                                <td>{{ result.marks_obtained }} / {{ result.total_marks }}</td>
+                                <td>{{ result.percentage|floatformat:2 }}%</td>
+                                <td>
+                                    <span class="grade-badge 
+                                        {% if result.grade|slice:':1' == 'A' %}grade-a
+                                        {% elif result.grade|slice:':1' == 'B' %}grade-b
+                                        {% elif result.grade|slice:':1' == 'C' %}grade-c
+                                        {% else %}grade-f{% endif %}">
+                                        {{ result.grade }}
+                                    </span>
+                                </td>
+                                <td>{{ result.published_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <a href="{% url 'result_detail' result.id %}" class="btn">
+                                        <span>Details</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="empty-title">No Published Results</div>
+                    <div class="empty-desc">Your results will appear here once they're published</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Add smooth entrance animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Any dynamic interactions can go here
+            console.log('Results page ready');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,992 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Center · FuturProctor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #a855f7;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.05);
+            --live-glow: rgba(16, 185, 129, 0.2);
+            --upcoming-glow: rgba(245, 158, 11, 0.2);
+            --completed-glow: rgba(100, 116, 139, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            min-height: 100vh;
+            color: var(--light);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            bottom: -10%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: var(--secondary);
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        .orb-3 {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: var(--accent);
+            animation: float 30s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(5%, 5%) scale(1.1); }
+            50% { transform: translate(-5%, 10%) scale(0.9); }
+            75% { transform: translate(-10%, -5%) scale(1.05); }
+        }
+
+        /* Main Container */
+        .dashboard {
+            position: relative;
+            z-index: 1;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Glassmorphism Base */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 32px;
+            margin-bottom: 32px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0.5;
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .title-section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .title-section h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #fff, var(--gray));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title-section h1 i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+        }
+
+        .title-subtitle {
+            color: var(--gray);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            color: var(--light);
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateX(-4px);
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 48px 0 24px;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header h2 i {
+            font-size: 1.8rem;
+        }
+
+        .section-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--gray);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        /* Exam Grid */
+        .exam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 24px;
+        }
+
+        /* Exam Card */
+        .exam-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 28px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .exam-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .exam-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5);
+        }
+
+        .exam-card:hover::before {
+            opacity: 1;
+        }
+
+        .exam-card.live {
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 30px var(--live-glow);
+        }
+
+        .exam-card.upcoming {
+            border-color: rgba(245, 158, 11, 0.3);
+            box-shadow: 0 0 30px var(--upcoming-glow);
+        }
+
+        .exam-card.completed {
+            border-color: rgba(100, 116, 139, 0.3);
+            opacity: 0.8;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            position: absolute;
+            top: 24px;
+            right: 28px;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .status-live {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .status-upcoming {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-completed {
+            background: rgba(100, 116, 139, 0.15);
+            color: var(--gray);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
+
+        .status-attempted {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            right: 28px;
+            top: 84px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Card Content */
+        .exam-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 12px;
+            padding-right: 100px;
+            letter-spacing: -0.01em;
+        }
+
+        .exam-subject {
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 6px 16px;
+            border-radius: 40px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .exam-details {
+            font-size: 0.95rem;
+            color: var(--gray);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .exam-details i {
+            width: 20px;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .exam-details strong {
+            color: var(--light);
+            font-weight: 600;
+            min-width: 85px;
+        }
+
+        .exam-details span {
+            color: var(--gray);
+        }
+
+        /* Timer */
+        .countdown-timer {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 24px 0;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .countdown-timer.live {
+            background: rgba(16, 185, 129, 0.05);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .timer-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray);
+            margin-bottom: 12px;
+        }
+
+        .timer-label.live {
+            color: #34d399;
+        }
+
+        .timer-parts {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .timer-part {
+            text-align: center;
+            min-width: 65px;
+        }
+
+        .timer-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--light);
+            line-height: 1;
+            display: block;
+            font-feature-settings: 'tnum';
+            font-variant-numeric: tabular-nums;
+            background: linear-gradient(135deg, #fff, var(--gray));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .timer-value.live {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .timer-unit {
+            font-size: 0.7rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn-disabled {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--gray);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-disabled::before {
+            display: none;
+        }
+
+        /* Info Message */
+        .info-message {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            color: var(--gray);
+            text-align: center;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .info-message i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        /* Exam Note */
+        .exam-note {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .exam-note i {
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+
+        .exam-note.upcoming i {
+            color: var(--warning);
+        }
+
+        .exam-note.completed i {
+            color: var(--gray);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 16px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .title-section h1 {
+                font-size: 2rem;
+                justify-content: center;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .exam-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timer-parts {
+                gap: 8px;
+            }
+
+            .timer-part {
+                min-width: 50px;
+            }
+
+            .timer-value {
+                font-size: 1.8rem;
+            }
+
+            .status-attempted {
+                position: static;
+                margin-top: 16px;
+                display: inline-block;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .exam-card {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .exam-grid .exam-card:nth-child(1) { animation-delay: 0.1s; }
+        .exam-grid .exam-card:nth-child(2) { animation-delay: 0.2s; }
+        .exam-grid .exam-card:nth-child(3) { animation-delay: 0.3s; }
+        .exam-grid .exam-card:nth-child(4) { animation-delay: 0.4s; }
+        .exam-grid .exam-card:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="dashboard">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="title-section">
+                <h1>
+                    <i class="fas fa-graduation-cap"></i>
+                    Exam Center
+                </h1>
+                <div class="title-subtitle">
+                    <i class="fas fa-circle" style="color: var(--success); font-size: 0.5rem;"></i>
+                    Browse and join available exams
+                </div>
+            </div>
+            <a href="{% url 'student_dashboard_enhanced' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+
+        <!-- LIVE EXAMS SECTION -->
+        <div class="section-header">
+            <h2>
+                <i class="fas fa-circle" style="color: #10b981; font-size: 1.2rem;"></i>
+                Live Now
+            </h2>
+            <span class="section-badge">
+                <i class="fas fa-bolt" style="margin-right: 6px;"></i>
+                {{ live_exams|length }} Active
+            </span>
+        </div>
+        
+        {% if live_exams %}
+            <div class="exam-grid">
+                {% for exam in live_exams %}
+                <div class="exam-card live">
+                    <span class="status-badge status-live">
+                        <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                        Live
+                    </span>
+                    
+                    <div class="exam-title">{{ exam.title }}</div>
+                    <div class="exam-subject">
+                        <i class="fas fa-book-open"></i>
+                        {{ exam.subject }}
+                    </div>
+                    
+                    <div class="exam-details">
+                        <i class="fas fa-calendar"></i>
+                        <strong>Started:</strong>
+                        <span>{{ exam.exam_date|date:"M d, Y - h:i A" }}</span>
+                    </div>
+                    <div class="exam-details">
+                        <i class="fas fa-clock"></i>
+                        <strong>Duration:</strong>
+                        <span>{{ exam.duration_minutes }} minutes</span>
+                    </div>
+                    <div class="exam-details">
+                        <i class="fas fa-star"></i>
+                        <strong>Total Marks:</strong>
+                        <span>{{ exam.total_marks }}</span>
+                    </div>
+                    <div class="exam-details">
+                        <i class="fas fa-question-circle"></i>
+                        <strong>Questions:</strong>
+                        <span>{{ exam.questions.count }}</span>
+                    </div>
+                    
+                    <!-- Countdown Timer - Time Remaining -->
+                    <div class="countdown-timer live">
+                        <div class="timer-label live">
+                            <i class="fas fa-hourglass-half" style="margin-right: 6px;"></i>
+                            Time Remaining
+                        </div>
+                        <div class="timer-parts" data-exam-end="{{ exam.end_time|date:'c' }}" data-timer-type="remaining">
+                            <div class="timer-part">
+                                <span class="timer-value live days">00</span>
+                                <span class="timer-unit">days</span>
+                            </div>
+                            <div class="timer-part">
+                                <span class="timer-value live hours">00</span>
+                                <span class="timer-unit">hrs</span>
+                            </div>
+                            <div class="timer-part">
+                                <span class="timer-value live minutes">00</span>
+                                <span class="timer-unit">mins</span>
+                            </div>
+                            <div class="timer-part">
+                                <span class="timer-value live seconds">00</span>
+                                <span class="timer-unit">secs</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if exam.has_attempted %}
+                        <span class="status-badge status-attempted">
+                            <i class="fas fa-check-circle"></i>
+                            Attempted
+                        </span>
+                        <button class="btn btn-disabled" disabled>
+                            <i class="fas fa-lock" style="margin-right: 8px;"></i>
+                            Already Taken
+                        </button>
+                    {% else %}
+                        <a href="{% url 'start_exam' exam.id %}" class="btn btn-success" 
+                           onclick="return confirm('Ready to start? Ensure stable internet and working webcam.')">
+                            <i class="fas fa-play" style="margin-right: 8px;"></i>
+                            Start Exam
+                        </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="info-message">
+                <i class="fas fa-pause-circle"></i>
+                No live exams at the moment. Check upcoming exams below.
+            </div>
+        {% endif %}
+
+        <!-- UPCOMING EXAMS SECTION -->
+        <div class="section-header">
+            <h2>
+                <i class="fas fa-circle" style="color: #f59e0b; font-size: 1.2rem;"></i>
+                Upcoming
+            </h2>
+            <span class="section-badge">
+                <i class="fas fa-calendar" style="margin-right: 6px;"></i>
+                {{ upcoming_exams|length }} Scheduled
+            </span>
+        </div>
+        
+        {% if upcoming_exams %}
+            <div class="exam-grid">
+                {% for exam in upcoming_exams %}
+                <div class="exam-card upcoming">
+                    <span class="status-badge status-upcoming">
+                        <i class="fas fa-hourglass-start"></i>
+                        Scheduled
+                    </span>
+                    
+                    <div class="exam-title">{{ exam.title }}</div>
+                    <div class="exam-subject">
+                        <i class="fas fa-book-open"></i>
+                        {{ exam.subject }}
+                    </div>
+                    
+                    <div class="exam-details">
+                        <i class="fas fa-calendar"></i>
+                        <strong>Scheduled:</strong>
+                        <span>{{ exam.exam_date|date:"M d, Y - h:i A" }}</span>
+                    </div>
+                    <div class="exam-details">
+                        <i class="fas fa-clock"></i>
+                        <strong>Duration:</strong>
+                        <span>{{ exam.duration_minutes }} minutes</span>
+                    </div>
+                    <div class="exam-details">
+                        <i class="fas fa-star"></i>
+                        <strong>Total Marks:</strong>
+                        <span>{{ exam.total_marks }}</span>
+                    </div>
+                    <div class="exam-details">
+                        <i class="fas fa-question-circle"></i>
+                        <strong>Questions:</strong>
+                        <span>{{ exam.questions.count }}</span>
+                    </div>
+                    
+                    {% if exam.instructions %}
+                    <div class="exam-details" style="font-style: italic;">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Note:</strong>
+                        <span>{{ exam.instructions|truncatewords:15 }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Countdown Timer - Time Until Start -->
+                    <div class="countdown-timer">
+                        <div class="timer-label">
+                            <i class="fas fa-hourglass-start" style="margin-right: 6px;"></i>
+                            Starts In
+                        </div>
+                        <div class="timer-parts" data-exam-start="{{ exam.exam_date|date:'c' }}" data-timer-type="upcoming">
+                            <div class="timer-part">
+                                <span class="timer-value days">00</span>
+                                <span class="timer-unit">days</span>
+                            </div>
+                            <div class="timer-part">
+                                <span class="timer-value hours">00</span>
+                                <span class="timer-unit">hrs</span>
+                            </div>
+                            <div class="timer-part">
+                                <span class="timer-value minutes">00</span>
+                                <span class="timer-unit">mins</span>
+                            </div>
+                            <div class="timer-part">
+                                <span class="timer-value seconds">00</span>
+                                <span class="timer-unit">secs</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-disabled" disabled>
+                        <i class="fas fa-lock" style="margin-right: 8px;"></i>
+                        Not Available Yet
+                    </button>
+                    <div class="exam-note upcoming">
+                        <i class="fas fa-clock"></i>
+                        Available at scheduled time
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="info-message">
+                <i class="fas fa-calendar-times"></i>
+                No upcoming exams scheduled.
+            </div>
+        {% endif %}
+
+        <!-- COMPLETED EXAMS SECTION -->
+        <div class="section-header">
+            <h2>
+                <i class="fas fa-circle" style="color: #64748b; font-size: 1.2rem;"></i>
+                Completed
+            </h2>
+            <span class="section-badge">
+                <i class="fas fa-check-circle" style="margin-right: 6px;"></i>
+                {{ completed_exams|length }} Ended
+            </span>
+        </div>
+        
+        {% if completed_exams %}
+            <div class="exam-grid">
+                {% for exam in completed_exams %}
+                <div class="exam-card completed">
+                    <span class="status-badge status-completed">
+                        <i class="fas fa-check"></i>
+                        Ended
+                    </span>
+                    
+                    <div class="exam-title">{{ exam.title }}</div>
+                    <div class="exam-subject">
+                        <i class="fas fa-book-open"></i>
+                        {{ exam.subject }}
+                    </div>
+                    
+                    <div class="exam-details">
+                        <i class="fas fa-calendar"></i>
+                        <strong>Date:</strong>
+                        <span>{{ exam.exam_date|date:"M d, Y - h:i A" }}</span>
+                    </div>
+                    <div class="exam-details">
+                        <i class="fas fa-clock"></i>
+                        <strong>Duration:</strong>
+                        <span>{{ exam.duration_minutes }} minutes</span>
+                    </div>
+                    <div class="exam-details">
+                        <i class="fas fa-star"></i>
+                        <strong>Total Marks:</strong>
+                        <span>{{ exam.total_marks }}</span>
+                    </div>
+                    
+                    <button class="btn btn-disabled" disabled>
+                        <i class="fas fa-ban" style="margin-right: 8px;"></i>
+                        Exam Ended
+                    </button>
+                    <div class="exam-note completed">
+                        <i class="fas fa-history"></i>
+                        No longer available
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="info-message">
+                <i class="fas fa-check-circle"></i>
+                No completed exams yet.
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Countdown Timer Function
+        function updateCountdown(timerElement) {
+            const timerType = timerElement.getAttribute('data-timer-type');
+            const targetDate = new Date(timerElement.getAttribute(timerType === 'upcoming' ? 'data-exam-start' : 'data-exam-end'));
+            
+            const daysSpan = timerElement.querySelector('.days');
+            const hoursSpan = timerElement.querySelector('.hours');
+            const minutesSpan = timerElement.querySelector('.minutes');
+            const secondsSpan = timerElement.querySelector('.seconds');
+            
+            function update() {
+                const now = new Date();
+                const difference = targetDate - now;
+                
+                if (difference <= 0) {
+                    // Timer expired - reload page to update exam status
+                    location.reload();
+                    return;
+                }
+                
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+                
+                daysSpan.textContent = String(days).padStart(2, '0');
+                hoursSpan.textContent = String(hours).padStart(2, '0');
+                minutesSpan.textContent = String(minutes).padStart(2, '0');
+                secondsSpan.textContent = String(seconds).padStart(2, '0');
+            }
+            
+            update();
+            setInterval(update, 1000);
+        }
+        
+        // Initialize all countdown timers
+        document.addEventListener('DOMContentLoaded', function() {
+            const timers = document.querySelectorAll('[data-timer-type]');
+            timers.forEach(timer => updateCountdown(timer));
+        });
+    </script>
+</body>
+</html>

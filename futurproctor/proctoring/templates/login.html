@@ -1,0 +1,1066 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FutureProctor · Secure Login</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #a855f7;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.05);
+            --glow-primary: 0 0 30px rgba(99, 102, 241, 0.3);
+            --glow-secondary: 0 0 30px rgba(168, 85, 247, 0.3);
+            --glow-accent: 0 0 30px rgba(6, 182, 212, 0.3);
+            --glow-danger: 0 0 30px rgba(239, 68, 68, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            color: var(--light);
+        }
+
+        /* Animated Background */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
+            z-index: -2;
+        }
+
+        /* Animated Grid */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: floatParticle 10s infinite linear;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            bottom: -10%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: var(--secondary);
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(5%, 5%) scale(1.1); }
+            50% { transform: translate(-5%, 10%) scale(0.9); }
+            75% { transform: translate(-10%, -5%) scale(1.05); }
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 1300px;
+            position: relative;
+            z-index: 1;
+            margin: 20px auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Glassmorphism Card */
+        .login-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0.5;
+            animation: rotate 30s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+            padding: 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: rotate 20s linear infinite;
+        }
+
+        .login-header h1 {
+            color: var(--light);
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-header h1 i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            animation: glowPulse 3s infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.5)); }
+        }
+
+        .login-body {
+            padding: 50px;
+        }
+
+        /* Instructions Card */
+        .instructions {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .instructions::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(245, 158, 11, 0.1), transparent 70%);
+            pointer-events: none;
+        }
+
+        .instructions h4 {
+            color: var(--warning);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .instructions h4 i {
+            font-size: 1.5rem;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .instructions li {
+            color: var(--gray);
+            padding: 10px 15px;
+            padding-left: 35px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .instructions li::before {
+            content: '→';
+            position: absolute;
+            left: 12px;
+            color: var(--warning);
+            font-weight: bold;
+        }
+
+        .instructions li strong {
+            color: var(--light);
+        }
+
+        /* Face Detection Error Tab - Only visible when there's an error */
+        .face-error-tab {
+            display: none;
+            background: var(--danger-light);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-left: 4px solid var(--danger);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+            color: #f87171;
+            font-size: 0.95rem;
+            align-items: center;
+            gap: 12px;
+            animation: slideError 0.3s ease-out;
+            box-shadow: 0 5px 15px -5px rgba(239, 68, 68, 0.3);
+        }
+
+        .face-error-tab.show {
+            display: flex;
+        }
+
+        .face-error-tab i {
+            font-size: 1.3rem;
+            color: var(--danger);
+        }
+
+        .face-error-tab .error-content {
+            flex: 1;
+        }
+
+        .face-error-tab .error-title {
+            font-weight: 700;
+            color: var(--danger);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .face-error-tab .error-message {
+            color: #fca5a5;
+            font-size: 0.9rem;
+        }
+
+        .face-error-tab .close-error {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 5px;
+            transition: all 0.3s;
+        }
+
+        .face-error-tab .close-error:hover {
+            color: var(--danger);
+            transform: scale(1.1);
+        }
+
+        @keyframes slideError {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Row */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 28px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .form-section:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-section h5 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-section h5 i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.6rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--gray);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: var(--gray);
+            opacity: 0.5;
+        }
+
+        /* Video Container */
+        .video-container {
+            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+        }
+
+        .video-container:hover {
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.3);
+        }
+
+        .video-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.1), transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #webcam-stream {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 18px;
+            transform: scaleX(-1);
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 2;
+        }
+
+        .live-badge {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(10px);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .capture-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .capture-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .capture-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.5);
+        }
+
+        .capture-btn:hover::before {
+            opacity: 1;
+        }
+
+        /* Captured Photo Preview */
+        .captured-photo {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .captured-photo.show {
+            display: block;
+        }
+
+        .captured-photo h5 {
+            color: var(--success);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .captured-photo h5 i {
+            font-size: 1.2rem;
+        }
+
+        .captured-photo img {
+            width: 100%;
+            border-radius: 12px;
+            border: 2px solid var(--success);
+            box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Button Group */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 18px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            color: var(--light);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .login-body {
+                padding: 30px 20px;
+            }
+
+            .login-header {
+                padding: 30px 20px;
+            }
+
+            .login-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .instructions ul {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-header h1 {
+                font-size: 1.5rem;
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Elements -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="gradient-bg"></div>
+    <div class="grid-bg"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="login-container" data-aos="fade-up" data-aos-duration="1000">
+        <div class="login-card" data-testid="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <h1 data-testid="login-title">
+                    <i class="fas fa-fingerprint"></i>
+                    Secure Student Login
+                </h1>
+            </div>
+
+            <!-- Body -->
+            <div class="login-body">
+                <!-- Instructions -->
+                <div class="instructions" data-aos="fade-up" data-aos-delay="100" data-testid="instructions">
+                    <h4>
+                        <i class="fas fa-info-circle"></i>
+                        Two-Step Verification Required
+                    </h4>
+                    <ul>
+                        <li><strong>Step 1:</strong> Click <strong>Capture Photo</strong> for face verification</li>
+                        <li><strong>Step 2:</strong> Enter your registered email and password</li>
+                        <li><strong>Step 3:</strong> Click <strong>Login</strong> to access your dashboard</li>
+                    </ul>
+                </div>
+
+                <!-- Face Detection Error Tab - Only visible when there's an error -->
+                <div id="face-error-tab" class="face-error-tab" data-testid="face-error-tab">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="error-content">
+                        <div class="error-title">
+                            <i class="fas fa-face-frown"></i>
+                            Face Detection Error
+                        </div>
+                        <div class="error-message" id="face-error-message">
+                            Unable to detect face. Please ensure good lighting and position your face clearly.
+                        </div>
+                    </div>
+                    <button class="close-error" onclick="hideFaceError()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Form Row -->
+                <div class="form-row">
+                    <!-- Login Form Section -->
+                    <div class="form-section" data-aos="fade-right" data-aos-delay="200">
+                        <h5 data-testid="credentials-title">
+                            <i class="fas fa-key"></i>
+                            Account Credentials
+                        </h5>
+                        <form id="login-form" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="username" class="form-label">Email Address</label>
+                                <input type="email" id="username" name="email" class="form-control" 
+                                       placeholder="student@example.com" required data-testid="email-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" id="password" name="password" class="form-control" 
+                                       placeholder="••••••••" required data-testid="password-input">
+                            </div>
+                            <input type="hidden" id="captured_photo_input" name="captured_photo">
+                        </form>
+                    </div>
+
+                    <!-- Face Recognition Section -->
+                    <div class="form-section" data-aos="fade-left" data-aos-delay="300">
+                        <h5 data-testid="face-recognition-title">
+                            <i class="fas fa-camera-retro"></i>
+                            Face Verification
+                        </h5>
+                        <div class="video-container">
+                            <img id="webcam-stream" src="{% url 'video_feed' %}" alt="Video Feed" data-testid="webcam-stream">
+                            <div class="video-overlay">
+                                <span class="live-badge">
+                                    <i class="fas fa-circle"></i>
+                                    LIVE
+                                </span>
+                            </div>
+                        </div>
+                        <button id="take-photo-btn" class="capture-btn" data-testid="capture-photo-btn">
+                            <i class="fas fa-camera"></i>
+                            Capture Photo
+                        </button>
+
+                        <!-- Captured Photo Preview -->
+                        <div class="captured-photo" id="captured-photo-container" data-testid="captured-photo-container">
+                            <h5>
+                                <i class="fas fa-check-circle"></i>
+                                Verification Photo Captured
+                            </h5>
+                            <img id="captured-photo" alt="Captured Photo" data-testid="captured-photo">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group" data-aos="fade-up" data-aos-delay="400">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'home' %}'" data-testid="close-btn">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="login-btn" data-testid="login-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login Securely
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            once: true,
+            offset: 100,
+            duration: 1000,
+            easing: 'ease-in-out'
+        });
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.querySelector('.particles');
+            if (particlesContainer) {
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 10 + 's';
+                    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                    particle.style.background = `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, 255, ${Math.random() * 0.5 + 0.3})`;
+                    particlesContainer.appendChild(particle);
+                }
+            }
+        }
+
+        // Initialize particles
+        createParticles();
+
+        const webcamStream = document.getElementById('webcam-stream');
+        const takePhotoBtn = document.getElementById('take-photo-btn');
+        const canvas = document.createElement('canvas');
+        const capturedPhoto = document.getElementById('captured-photo');
+        const capturedPhotoContainer = document.getElementById('captured-photo-container');
+        const capturedPhotoInput = document.getElementById('captured_photo_input');
+        const faceErrorTab = document.getElementById('face-error-tab');
+        const faceErrorMessage = document.getElementById('face-error-message');
+        const loginBtn = document.getElementById('login-btn');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        let photoCaptured = false;
+
+        // Function to show face detection error
+        function showFaceError(message) {
+            faceErrorMessage.textContent = message || "Unable to detect face. Please ensure good lighting and position your face clearly.";
+            faceErrorTab.classList.add('show');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                hideFaceError();
+            }, 5000);
+        }
+
+        // Function to hide face detection error
+        function hideFaceError() {
+            faceErrorTab.classList.remove('show');
+        }
+
+        // Simulate face detection check (you can replace this with actual face detection logic)
+        function checkFaceDetection() {
+            // This is a simulation - replace with actual face detection logic
+            // For demo purposes, randomly show error 30% of the time
+            const randomError = Math.random() < 0.3;
+            
+            if (randomError) {
+                showFaceError("No face detected. Please adjust your position and try again.");
+                return false;
+            }
+            return true;
+        }
+
+        // Capture photo with face detection check
+        takePhotoBtn.addEventListener('click', () => {
+            // First check if face is detectable
+            if (!checkFaceDetection()) {
+                return;
+            }
+
+            canvas.width = webcamStream.width;
+            canvas.height = webcamStream.height;
+
+            const context = canvas.getContext('2d');
+            context.drawImage(webcamStream, 0, 0, canvas.width, canvas.height);
+
+            const photoData = canvas.toDataURL('image/png');
+            capturedPhoto.src = photoData;
+            capturedPhotoInput.value = photoData;
+            photoCaptured = true;
+            capturedPhotoContainer.classList.add('show');
+            
+            // Hide error if visible
+            hideFaceError();
+
+            // Add success animation
+            capturedPhotoContainer.style.animation = 'none';
+            capturedPhotoContainer.offsetHeight;
+            capturedPhotoContainer.style.animation = 'slideIn 0.5s';
+        });
+
+        // Login button click
+        loginBtn.addEventListener('click', async (event) => {
+            if (!photoCaptured) {
+                event.preventDefault();
+                showFaceError("Please capture your photo for face verification before logging in.");
+                return;
+            }
+
+            // Show loading state
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+            loginBtn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('email', document.getElementById('username').value);
+                formData.append('password', document.getElementById('password').value);
+                formData.append('captured_photo', capturedPhotoInput.value);
+
+                const response = await fetch('/login/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Success animation
+                    loginBtn.innerHTML = '<i class="fas fa-check"></i> Success! Redirecting...';
+                    loginBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url;
+                    }, 1000);
+                } else {
+                    if (data.error && data.error.includes('face')) {
+                        showFaceError(data.error);
+                    } else {
+                        // Show generic error in a different way
+                        alert(data.error || "Login failed. Please try again.");
+                    }
+                    
+                    // Reset button
+                    loginBtn.innerHTML = originalText;
+                    loginBtn.disabled = false;
+                }
+            } catch (error) {
+                showFaceError("An error occurred during face verification. Please try again.");
+                
+                // Reset button
+                loginBtn.innerHTML = originalText;
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Add input focus effects
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', () => {
+                input.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+
+        // Simulate periodic face detection checks (for demo purposes)
+        // In production, replace with actual face detection logic from your video feed
+        setInterval(() => {
+            // Only check if no photo captured yet
+            if (!photoCaptured) {
+                // This is just for demo - replace with actual face detection
+                const faceDetected = Math.random() < 0.7; // 70% chance of face detected
+                
+                if (!faceDetected) {
+                    showFaceError("No face detected in frame. Please position yourself properly.");
+                } else {
+                    hideFaceError();
+                }
+            }
+        }, 5000);
+
+        // Console greeting
+        console.log('%c🔐 FutureProctor Secure Login', 'color: #6366f1; font-size: 16px; font-weight: bold;');
+        console.log('%cPlease complete face verification for secure access', 'color: #a855f7; font-size: 14px;');
+    </script>
+</body>
+</html>

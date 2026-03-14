@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student approval · FuturProctor</title>
+    <!-- Font Awesome 6 (free) for crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f0eb;  /* light beige background */
+            min-height: 100vh;
+            padding: 28px 24px;
+        }
+
+        /* main container – soft, elevated card */
+        .approval-card {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 42px;
+            box-shadow: 0 30px 55px -15px rgba(80, 60, 40, 0.2);
+            padding: 36px 44px;
+            transition: all 0.2s;
+            border: 1px solid #f5e7dc;
+        }
+
+        /* header area */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .title-section h1 {
+            font-size: 34px;
+            font-weight: 600;
+            background: linear-gradient(145deg, #6d8f9f 0%, #9fb7c7 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .title-section h1 i {
+            background: none;
+            -webkit-text-fill-color: #e9b6b1; /* rose pink */
+            font-size: 38px;
+        }
+
+        .title-section p {
+            color: #a49282;  /* warm grey */
+            font-size: 16px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .title-section p i {
+            color: #b5c9d6; /* powder blue */
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: #f0e7de;
+            color: #5f5243;
+            border: 1px solid #ebdbcf;
+        }
+
+        .btn-outline i {
+            color: #6d8f9f;
+        }
+
+        .btn-outline:hover {
+            background: #e9b6b1;
+            border-color: #e9b6b1;
+            color: #2e2e2e;
+        }
+
+        .btn-outline:hover i {
+            color: #2e2e2e;
+        }
+
+        /* messages */
+        .messages {
+            padding: 16px 24px;
+            border-radius: 40px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 6px solid;
+        }
+        .messages.success {
+            background: #e1f0e5;
+            border-color: #6d8f9f;
+            color: #2d6a4f;
+        }
+        .messages.warning {
+            background: #fdeee8;
+            border-color: #e9b6b1;
+            color: #aa7845;
+        }
+        .messages i {
+            font-size: 22px;
+        }
+
+        /* table styles */
+        .table-wrapper {
+            border-radius: 28px;
+            background: #fefcf9;
+            border: 1px solid #f0e3d8;
+            overflow-x: auto;
+            margin: 20px 0 10px;
+            box-shadow: 0 6px 14px -12px #b8a898;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            text-align: left;
+            padding: 20px 22px;
+            background: #fff9f5;
+            font-weight: 600;
+            font-size: 14px;
+            color: #6d5d4e;
+            border-bottom: 2px solid #e9d9cd;
+        }
+
+        td {
+            padding: 18px 22px;
+            border-bottom: 1px solid #f2e4d9;
+            color: #3e3a36;
+            font-size: 15px;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #fdf3ed;
+        }
+
+        /* student photo */
+        .student-photo {
+            width: 52px;
+            height: 52px;
+            border-radius: 30px;
+            object-fit: cover;
+            background: #f0e7de;
+            border: 2px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .photo-placeholder {
+            width: 52px;
+            height: 52px;
+            border-radius: 30px;
+            background: #f0e7de;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6d8f9f;
+            font-size: 24px;
+            border: 2px solid white;
+        }
+
+        /* badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: #fdeee8;
+            color: #aa7845;
+            border-left: 4px solid #e9b6b1;
+        }
+
+        .badge-approved {
+            background: #e1f0e5;
+            color: #2d6a4f;
+            border-left: 4px solid #6d8f9f;
+        }
+
+        .badge-rejected {
+            background: #ffe4e1;
+            color: #b13e3e;
+            border-left: 4px solid #e9b6b1;
+        }
+
+        /* action buttons */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            cursor: pointer;
+            transition: 0.15s;
+            color: white;
+        }
+
+        .btn-approve {
+            background: #6d8f9f; /* powder blue */
+        }
+
+        .btn-approve:hover {
+            background: #577b8c;
+            transform: translateY(-2px);
+        }
+
+        .btn-reject {
+            background: #e9b6b1; /* rose pink */
+            color: #2e2e2e;
+        }
+
+        .btn-reject:hover {
+            background: #dd9f99;
+            transform: translateY(-2px);
+        }
+
+        .approval-meta {
+            color: #a39587;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .approval-meta i {
+            color: #6d8f9f;
+        }
+
+        /* empty state */
+        .empty-row td {
+            text-align: center;
+            padding: 60px 20px;
+            color: #b1a089;
+            font-size: 16px;
+        }
+
+        .empty-row i {
+            font-size: 48px;
+            color: #e9b6b1;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* footer note */
+        .footer-note {
+            margin-top: 48px;
+            text-align: right;
+            color: #c8b9ab;
+            font-size: 13px;
+            border-top: 1px solid #f0e3d8;
+            padding-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-note span i {
+            color: #e9b6b1;
+        }
+    </style>
+</head>
+<body>
+<div class="approval-card">
+    <!-- header -->
+    <div class="page-header">
+        <div class="title-section">
+            <h1><i class="fas="fa-user-check"></i> Student approval management</h1>
+            <p><i class="fas fa-users"></i> Review and manage student registrations</p>
+        </div>
+        <a href="{% url 'admin_dashboard_enhanced' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Dashboard</a>
+    </div>
+
+    <!-- messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messages {{ message.tags }}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- students table -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Registered</th>
+                    <th>Status</th>
+                    <th>Actions / Info</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>
+                        {% if student.photo %}
+                            <img src="{{ student.photo.url }}" alt="{{ student.name }}" class="student-photo">
+                        {% else %}
+                            <div class="photo-placeholder"><i class="fas fa-user"></i></div>
+                        {% endif %}
+                    </td>
+                    <td><strong>{{ student.name }}</strong></td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.address|default:"—" }}</td>
+                    <td><i class="fas fa-calendar-day" style="color:#b5c9d6; margin-right:4px;"></i> {{ student.timestamp|date:"M d, Y H:i" }}</td>
+                    <td>
+                        {% if student.approval_status == 'pending' %}
+                            <span class="badge badge-pending"><i class="fas fa-hourglass-half"></i> Pending</span>
+                        {% elif student.approval_status == 'approved' %}
+                            <span class="badge badge-approved"><i class="fas fa-check-circle"></i> Approved</span>
+                        {% elif student.approval_status == 'rejected' %}
+                            <span class="badge badge-rejected"><i class="fas fa-times-circle"></i> Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if student.approval_status == 'pending' %}
+                            <div class="btn-group">
+                                <form method="post" action="{% url 'approve_student' student.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action btn-approve"><i class="fas fa-check"></i> Approve</button>
+                                </form>
+                                <form method="post" action="{% url 'reject_student' student.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action btn-reject"><i class="fas fa-times"></i> Reject</button>
+                                </form>
+                            </div>
+                        {% else %}
+                            <div class="approval-meta">
+                                <i class="fas fa-user-shield"></i>
+                                {{ student.approved_by.username }} <span style="color:#c8b9ab;">•</span> {{ student.approved_at|date:"M d, Y" }}
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="empty-row">
+                    <td colspan="7">
+                        <i class="fas fa-users-slash"></i>
+                        No students found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- footer note -->
+    <div class="footer-note">
+        <!-- <span><i class="fas fa-palette"></i> powder blue · rose pink · light beige · light brown · grey</span> -->
+        <span><i class="fas fa-graduation-cap" style="color:#e9b6b1;"></i> FuturProctor</span>
+    </div>
+</div>
+</body>
+</html>

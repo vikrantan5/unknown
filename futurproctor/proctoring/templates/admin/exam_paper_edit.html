@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Exam · FuturProctor</title>
+    <!-- Font Awesome 6 (free) for crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f0eb;  /* light beige background */
+            min-height: 100vh;
+            padding: 28px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* main card – soft, elevated */
+        .edit-card {
+            max-width: 860px;
+            width: 100%;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 42px;
+            box-shadow: 0 30px 55px -15px rgba(80, 60, 40, 0.25);
+            padding: 40px 48px;
+            transition: all 0.2s ease;
+            border: 1px solid #f5e7dc;
+        }
+
+        /* header area */
+        .header-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0e7de;   /* light beige / greyish */
+            color: #5f5243;
+            padding: 10px 22px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s;
+            border: 1px solid #ebdbcf;
+        }
+
+        .back-link i {
+            color: #e9b6b1; /* rose pink */
+            font-size: 16px;
+        }
+
+        .back-link:hover {
+            background: #e9b6b1;
+            color: #2e2e2e;
+            border-color: #e9b6b1;
+        }
+
+        .back-link:hover i {
+            color: #2e2e2e;
+        }
+
+        .title-group h1 {
+            font-size: 32px;
+            font-weight: 600;
+            background: linear-gradient(145deg, #6d8f9f 0%, #9fb7c7 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .title-group h1 i {
+            background: none;
+            -webkit-text-fill-color: #e9b6b1;
+            font-size: 36px;
+        }
+
+        .subtitle {
+            color: #a49282;  /* warm grey */
+            font-size: 16px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subtitle i {
+            color: #b5c9d6; /* powder blue */
+        }
+
+        /* form layout */
+        .edit-form {
+            margin-top: 28px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px 30px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #6d5d4e; /* light brown shade */
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.02em;
+        }
+
+        .form-group label i {
+            color: #e9b6b1;
+            font-size: 16px;
+            width: 20px;
+        }
+
+        /* special icon colors for variety */
+        .form-group:nth-child(1) label i,
+        .form-group:nth-child(2) label i {
+            color: #6d8f9f;  /* powder blue */
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #f0e3d8;
+            border-radius: 26px;
+            font-size: 15px;
+            background: #fffcf9;
+            transition: 0.2s;
+            color: #3e3a36;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #e9b6b1;  /* rose pink focus */
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(233, 182, 177, 0.2);
+            background: #ffffff;
+        }
+
+        .form-group input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .form-group input[type="number"]::-webkit-outer-spin-button,
+        .form-group input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .textarea-md {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #b8a898;
+            margin-left: 16px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .hint i {
+            color: #b5c9d6;
+            font-size: 12px;
+        }
+
+        /* checkbox row */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #fcf8f4;
+            padding: 16px 24px;
+            border-radius: 40px;
+            border: 1px solid #f0e3d8;
+            grid-column: span 2;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: #e9b6b1; /* rose pink checkbox */
+            margin: 0;
+            border-radius: 8px;
+        }
+
+        .checkbox-wrapper label {
+            font-weight: 600;
+            color: #6d5d4e;
+            margin-bottom: 0;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .checkbox-wrapper i {
+            color: #6d8f9f;
+            font-size: 20px;
+        }
+
+        /* button group */
+        .button-group {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: #6d8f9f; /* powder blue */
+            color: white;
+            border: none;
+            padding: 16px 38px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 17px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 16px -8px #8dabb9;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary i {
+            color: white;
+            font-size: 18px;
+        }
+
+        .btn-primary:hover {
+            background: #577b8c;
+            transform: translateY(-2px);
+            box-shadow: 0 16px 22px -10px #577b8c;
+        }
+
+        .btn-secondary {
+            background: #e9b6b1; /* rose pink */
+            color: #2e2e2e;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 17px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 8px 16px -8px #e9b6b1;
+        }
+
+        .btn-secondary:hover {
+            background: #dd9f99;
+            transform: translateY(-2px);
+            color: #1e1e1e;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 2px solid #d9c8b8;
+            color: #6d5d4e;
+            padding: 14px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background: #f0e7de;
+            border-color: #cbb09b;
+            color: #4f3f31;
+        }
+
+        .small-note {
+            margin-left: auto;
+            color: #b8a898;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .small-note i {
+            color: #e9b6b1;
+        }
+
+        /* custom style for datetime-local */
+        input[type="datetime-local"] {
+            color-scheme: light;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* responsive */
+        @media (max-width: 700px) {
+            .edit-card { padding: 30px 24px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+            .checkbox-wrapper { grid-column: span 1; }
+            .button-group { flex-direction: column; align-items: stretch; }
+            .small-note { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="edit-card">
+    <!-- header with back button -->
+    <div class="header-area">
+        <a href="{% url 'exam_paper_detail' exam_paper.id %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to exam</a>
+        <div class="title-group">
+            <h1><i class="fas fa-pencil"></i> Edit exam paper</h1>
+            <div class="subtitle"><i class="fas fa-circle-info"></i> Update the details below</div>
+        </div>
+    </div>
+
+    <!-- main edit form -->
+    <form method="post" class="edit-form">
+        {% csrf_token %}
+
+        <div class="form-grid">
+            <!-- exam title -->
+            <div class="form-group full-width">
+                <label><i class="fas fa-heading"></i> Exam title <span style="color:#e9b6b1;">*</span></label>
+                <input type="text" name="title" value="{{ exam_paper.title }}" required placeholder="e.g., Midterm Exam">
+                <div class="hint"><i class="fas fa-lightbulb"></i> clear, descriptive title</div>
+            </div>
+
+            <!-- subject & date -->
+            <div class="form-group">
+                <label><i class="fas fa-book-open"></i> Subject <span style="color:#e9b6b1;">*</span></label>
+                <input type="text" name="subject" value="{{ exam_paper.subject }}" required placeholder="e.g. Mathematics">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-calendar-check"></i> Exam date & time <span style="color:#e9b6b1;">*</span></label>
+                <input type="datetime-local" name="exam_date" value="{{ exam_paper.exam_date|date:'Y-m-d\TH:i' }}" required>
+            </div>
+
+            <!-- duration & total marks -->
+            <div class="form-group">
+                <label><i class="fas fa-hourglass-half"></i> Duration (minutes) <span style="color:#e9b6b1;">*</span></label>
+                <input type="number" name="duration_minutes" value="{{ exam_paper.duration_minutes }}" required min="1">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-star"></i> Total marks <span style="color:#e9b6b1;">*</span></label>
+                <input type="number" name="total_marks" value="{{ exam_paper.total_marks }}" required min="1">
+            </div>
+
+            <!-- passing marks & description (first row desc) -->
+            <div class="form-group">
+                <label><i class="fas fa-flag-checkered"></i> Passing marks <span style="color:#e9b6b1;">*</span></label>
+                <input type="number" name="passing_marks" value="{{ exam_paper.passing_marks }}" required min="0">
+                <div class="hint"><i class="fas fa-calculator"></i> typically 40% of total</div>
+            </div>
+
+            <div class="form-group full-width">
+                <label><i class="fas fa-align-left"></i> Description</label>
+                <textarea name="description" class="textarea-md" placeholder="Brief description (optional)">{{ exam_paper.description }}</textarea>
+            </div>
+
+            <!-- instructions -->
+            <div class="form-group full-width">
+                <label><i class="fas fa-list-check"></i> Instructions</label>
+                <textarea name="instructions" class="textarea-md" placeholder="Exam instructions for students">{{ exam_paper.instructions }}</textarea>
+            </div>
+
+            <!-- active checkbox with powder/rose style -->
+            <div class="checkbox-wrapper">
+                <i class="fas fa-toggle-on"></i>
+                <input type="checkbox" name="is_active" id="isActive" {% if exam_paper.is_active %}checked{% endif %}>
+                <label for="isActive">Exam is active (available to students)</label>
+            </div>
+        </div>
+
+        <!-- button row -->
+        <div class="button-group">
+            <button type="submit" class="btn-primary"><i class="fas fa-check-circle"></i> ✓ Update exam</button>
+            <a href="{% url 'exam_paper_detail' exam_paper.id %}" class="btn-cancel"><i class="fas fa-times"></i> Cancel</a>
+            <span class="small-note"><i class="fas fa-palette"></i> powder · rose · beige</span>
+        </div>
+    </form>
+</div>
+<!-- all original functionality remains unchanged – only ui enhanced with given colours -->
+</body>
+</html>

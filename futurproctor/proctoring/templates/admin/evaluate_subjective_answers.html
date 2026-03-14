@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluate · FuturProctor · AI grading</title>
+    <!-- Font Awesome 6 (free) for crisp icons & modern feel -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f0eb;  /* light beige background */
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        /* main card – soft, elevated */
+        .evaluate-card {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 36px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+            padding: 36px 40px;
+            transition: all 0.2s ease;
+        }
+
+        /* header with powder blue / rose pink combo */
+        .title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .title-section h1 {
+            font-size: 32px;
+            font-weight: 600;
+            background: linear-gradient(145deg, #6d8f9f 0%, #9fb7c7 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-section h1 i {
+            background: none;
+            -webkit-text-fill-color: #e9b6b1; /* rose pink */
+            font-size: 38px;
+        }
+
+        .ai-badge {
+            background: #e9b6b1;
+            color: #2e2e2e;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(233, 182, 177, 0.3);
+        }
+
+        .ai-badge i {
+            font-size: 20px;
+        }
+
+        /* student info panel – light beige / grey */
+        .student-panel {
+            background: #fcf8f4;  /* light beige */
+            border-radius: 24px;
+            padding: 24px 28px;
+            margin: 25px 0 30px 0;
+            border: 1px solid #f0e3d8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            box-shadow: inset 0 1px 4px #ffffff, 0 6px 12px -10px #bba98b;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .info-item .icon-circle {
+            background: #e9b6b1;  /* rose pink */
+            width: 44px;
+            height: 44px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2e2e2e;
+            font-size: 20px;
+        }
+
+        .info-item .details {
+            line-height: 1.5;
+        }
+
+        .info-item .details .label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #8f8b85;
+            letter-spacing: 0.3px;
+        }
+
+        .info-item .details .value {
+            font-weight: 600;
+            color: #4b3f34; /* light brown shade */
+            font-size: 17px;
+        }
+
+        .mcq-chip {
+            background: #b5c9d6;  /* powder blue */
+            border-radius: 50px;
+            padding: 8px 18px;
+            color: #1e2e3a;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* AI info note – fresh, with powder blue border */
+        .ai-note-card {
+            background: #ecf3f7;  /* very light powder */
+            border-left: 6px solid #6d8f9f;  /* powder blue */
+            border-radius: 18px;
+            padding: 20px 28px;
+            margin: 24px 0 28px 0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 8px rgba(181, 201, 214, 0.2);
+        }
+
+        .ai-note-card i {
+            font-size: 40px;
+            color: #6d8f9f;
+        }
+
+        .ai-note-text {
+            flex: 1;
+            color: #345b6b;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .ai-note-text strong {
+            color: #1e4b5e;
+        }
+
+        /* action row for buttons */
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0 30px;
+        }
+
+        /* modern buttons – soft & stylish */
+        .btn {
+            padding: 14px 32px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .btn-auto {
+            background: #6d8f9f; /* powder blue */
+            color: #ffffff;
+            box-shadow: 0 8px 16px -6px #8dabb9;
+        }
+
+        .btn-auto:hover {
+            background: #577b8c;
+            transform: translateY(-2px);
+            box-shadow: 0 14px 22px -10px #577b8c;
+        }
+
+        .btn-manual {
+            background: #e9b6b1; /* rose pink */
+            color: #2e2e2e;
+            box-shadow: 0 8px 16px -6px #e9b6b1;
+        }
+
+        .btn-manual:hover {
+            background: #dd9f99;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #d9c8b8;
+            color: #6d5d4e;
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            border-color: #e9b6b1;
+            background: #fef3ef;
+        }
+
+        /* section heading */
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 40px 0 25px 0;
+        }
+
+        .section-heading i {
+            font-size: 28px;
+            background: #f0e7de;
+            padding: 10px;
+            border-radius: 18px;
+            color: #6d8f9f;
+        }
+
+        .section-heading h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4b3f34;
+        }
+
+        /* answer card – clean, airy, with coloured accents */
+        .answer-card {
+            background: #fefcf9;
+            border: 1px solid #f0e3d8;
+            border-radius: 28px;
+            padding: 28px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px -12px rgba(120, 90, 70, 0.2);
+            transition: 0.1s;
+        }
+
+        .answer-card:hover {
+            border-color: #e9b6b1;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .question-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            background: #f0e7de;
+            padding: 8px 18px;
+            border-radius: 40px;
+            color: #5b4c3d;
+        }
+
+        .marks-chip {
+            background: #b5c9d6;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #1e3b45;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #9b8b7a;
+            letter-spacing: 0.3px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .content-label i {
+            color: #e9b6b1;
+        }
+
+        .content-box {
+            background: #faf7f2;
+            padding: 18px 20px;
+            border-radius: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            border: 1px solid #efe4d8;
+            color: #3e3a36;
+        }
+
+        .student-answer-box {
+            background: #fff3eb;  /* light rose tint */
+            border-left: 6px solid #e9b6b1;
+        }
+
+        .model-answer-box {
+            background: #e7f1e9;
+            border-left: 6px solid #b5c9d6;
+        }
+
+        /* form elements – modern, rounded */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 20px 0 12px;
+        }
+
+        .form-group {
+            flex: 1 1 240px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #6d5d4e;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #f0e3d8;
+            border-radius: 24px;
+            font-size: 15px;
+            background: white;
+            transition: 0.15s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #e9b6b1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(233, 182, 177, 0.2);
+        }
+
+        .max-hint {
+            font-size: 13px;
+            color: #9b8b7a;
+            margin-top: 6px;
+            margin-left: 6px;
+        }
+
+        .ai-feedback-panel {
+            background: #ecf3f7;
+            border-radius: 20px;
+            padding: 14px 20px;
+            font-size: 14px;
+            color: #2b5566;
+            margin-top: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            border: 1px solid #b5c9d6;
+        }
+
+        .ai-feedback-panel i {
+            font-size: 20px;
+            color: #6d8f9f;
+        }
+
+        /* action footer */
+        .footer-actions {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 2px solid #f0e3d8;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 2px solid #d9c8b8;
+            color: #6d5d4e;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-cancel:hover {
+            background: #f0e7de;
+            border-color: #cbb09b;
+        }
+
+        .small-note {
+            color: #a39587;
+            font-size: 14px;
+            margin-left: auto;
+        }
+
+        /* empty / fallback */
+        .no-answer {
+            color: #b1a089;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="evaluate-card">
+    <!-- header with modern palette -->
+    <div class="title-section">
+        <h1><i class="fas fa-robot"></i> AI subjective evaluation</h1>
+        <div class="ai-badge"><i class="fas fa-bolt"></i> Groq AI · instant grading</div>
+    </div>
+
+    <!-- student info card: light beige, grey, powder details -->
+    <div class="student-panel">
+        <div class="info-item"><div class="icon-circle"><i class="fas fa-user-graduate"></i></div><div class="details"><span class="label">Student</span><div class="value">{{ attempt.student.name }}</div></div></div>
+        <div class="info-item"><div class="icon-circle"><i class="fas fa-envelope"></i></div><div class="details"><span class="label">Email</span><div class="value">{{ attempt.student.email }}</div></div></div>
+        <div class="info-item"><div class="icon-circle"><i class="fas fa-pencil-alt"></i></div><div class="details"><span class="label">Exam</span><div class="value">{{ attempt.exam_paper.title }} · {{ attempt.exam_paper.subject }}</div></div></div>
+        <div class="info-item"><div class="icon-circle"><i class="fas fa-clock"></i></div><div class="details"><span class="label">Submitted</span><div class="value">{{ attempt.submitted_at|date:"M d, Y H:i" }}</div></div></div>
+        <div class="mcq-chip"><i class="fas fa-check-circle"></i> MCQ marks: {{ attempt.total_marks_obtained }} (auto)</div>
+    </div>
+
+    <!-- AI note card (powder blue accent) -->
+    <div class="ai-note-card">
+        <i class="fas fa-magic"></i>
+        <div class="ai-note-text"><strong>🤖 AI evaluation ready</strong> – Click “Auto-evaluate with AI” to let Groq grade all subjective answers. You can review and tweak any marks manually below.</div>
+    </div>
+
+    <!-- main form -->
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- button row: auto + hint -->
+        <div class="action-row">
+            <button type="submit" name="action" value="auto_evaluate" class="btn btn-auto"><i class="fas fa-bolt"></i> Auto‑evaluate with AI (Groq)</button>
+            <span style="color:#a39587; display: flex; align-items: center; gap:6px"><i class="fas fa-arrow-right"></i> or manually grade each answer</span>
+        </div>
+
+        <!-- subjective answers heading -->
+        <div class="section-heading">
+            <i class="fas fa-file-pen"></i>
+            <h2>📝 Subjective answers</h2>
+        </div>
+
+        <!-- iterate answers -->
+        {% for answer in subjective_answers %}
+        <div class="answer-card">
+            <!-- question header with marks chip (powder) -->
+            <div class="question-header">
+                <h3><i class="fas fa-question-circle" style="color:#e9b6b1; margin-right:6px;"></i> Question {{ answer.question.order }}</h3>
+                <span class="marks-chip"><i class="fas fa-star"></i> {{ answer.question.marks }} marks</span>
+            </div>
+
+            <!-- question text -->
+            <div class="content-label"><i class="fas fa-comment"></i> Question</div>
+            <div class="content-box">{{ answer.question.question_text }}</div>
+
+            <!-- model answer -->
+            <div class="content-label"><i class="fas fa-check-double"></i> Model answer</div>
+            <div class="content-box model-answer-box">{{ answer.question.model_answer }}</div>
+
+            <!-- student answer -->
+            <div class="content-label"><i class="fas fa-pen"></i> Student's answer</div>
+            <div class="content-box student-answer-box">
+                {% if answer.answer_text %}{{ answer.answer_text }}{% else %}<span class="no-answer"><i class="fas fa-minus-circle"></i> No answer provided</span>{% endif %}
+            </div>
+
+            <!-- marks & feedback row (2 columns) -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-score" style="color:#6d8f9f;"></i> Marks obtained (max {{ answer.question.marks }})</label>
+                    <input type="number" name="marks_{{ answer.id }}" value="{{ answer.marks_obtained }}" min="0" max="{{ answer.question.marks }}" step="0.5" required>
+                    <div class="max-hint"><i class="far fa-circle"></i> max {{ answer.question.marks }}</div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-message" style="color:#e9b6b1;"></i> Feedback</label>
+                    <textarea name="feedback_{{ answer.id }}" rows="3" placeholder="Write evaluation feedback...">{{ answer.ai_feedback }}</textarea>
+                </div>
+            </div>
+
+            <!-- if AI feedback already present -->
+            {% if answer.ai_feedback %}
+            <div class="ai-feedback-panel">
+                <i class="fas fa-microchip"></i>
+                <div><strong>AI evaluation note:</strong> {{ answer.ai_feedback }}</div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <!-- footer actions: manual save + cancel -->
+        <div class="footer-actions">
+            <button type="submit" name="action" value="manual_save" class="btn btn-manual"><i class="fas fa-save"></i> Save manual evaluation</button>
+            <a href="{% url 'pending_evaluations_list' %}" class="btn-cancel"><i class="fas fa-times"></i> Cancel</a>
+            <span class="small-note"><i class="fas fa-palette" style="color:#e9b6b1;"></i> powder blue · rose pink · light beige</span>
+        </div>
+    </form>
+</div>
+<!-- all backend logic and features remain unchanged – only ui enhanced with given colours -->
+</body>
+</html>

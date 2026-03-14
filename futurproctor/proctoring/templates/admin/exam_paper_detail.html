@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ exam_paper.title }} · FuturProctor</title>
+    <!-- Font Awesome 6 (free) for crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f0eb;  /* light beige background */
+            min-height: 100vh;
+            padding: 28px 24px;
+        }
+
+        /* main container – soft, elevated card */
+        .exam-detail-card {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 42px;
+            box-shadow: 0 30px 55px -15px rgba(80, 60, 40, 0.2);
+            padding: 36px 44px;
+            transition: all 0.2s;
+            border: 1px solid #f5e7dc;
+        }
+
+        /* header area */
+        .top-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .title-section h1 {
+            font-size: 34px;
+            font-weight: 600;
+            background: linear-gradient(145deg, #6d8f9f 0%, #9fb7c7 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title-section h1 i {
+            background: none;
+            -webkit-text-fill-color: #e9b6b1; /* rose pink */
+            font-size: 38px;
+        }
+
+        .subject-badge {
+            background: #f0e7de;
+            padding: 6px 18px;
+            border-radius: 40px;
+            color: #6d5d4e;
+            font-weight: 500;
+            font-size: 16px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+
+        /* action buttons in header */
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: #f0e7de;
+            color: #5f5243;
+            border: 1px solid #ebdbcf;
+        }
+
+        .btn-outline i {
+            color: #6d8f9f;
+        }
+
+        .btn-outline:hover {
+            background: #e9b6b1;
+            border-color: #e9b6b1;
+            color: #2e2e2e;
+        }
+
+        .btn-primary {
+            background: #6d8f9f; /* powder blue */
+            color: white;
+            box-shadow: 0 8px 16px -8px #8dabb9;
+        }
+
+        .btn-primary i {
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #577b8c;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #e9b6b1; /* rose pink */
+            color: #2e2e2e;
+            box-shadow: 0 8px 16px -8px #e9b6b1;
+        }
+
+        .btn-success i {
+            color: #2e2e2e;
+        }
+
+        .btn-success:hover {
+            background: #dd9f99;
+            transform: translateY(-2px);
+        }
+
+        /* publish status banner */
+        .publish-banner {
+            border-radius: 26px;
+            padding: 22px 32px;
+            margin: 24px 0 28px 0;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border: 2px solid;
+            font-weight: 500;
+        }
+
+        .status-published {
+            background: #e1f0e5;
+            border-color: #b5c9d6; /* powder blue */
+            color: #2d6a4f;
+        }
+
+        .status-draft {
+            background: #fdeee8;
+            border-color: #e9b6b1; /* rose pink */
+            color: #aa7845;
+        }
+
+        .publish-banner i {
+            font-size: 28px;
+        }
+
+        .banner-text {
+            font-size: 18px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        /* publish action row */
+        .publish-actions {
+            background: #fcf8f4;
+            border-radius: 30px;
+            padding: 28px 32px;
+            margin-bottom: 36px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 28px;
+            border: 1px solid #f0e3d8;
+        }
+
+        .btn-publish, .btn-unpublish {
+            padding: 16px 40px;
+            font-size: 17px;
+            border-radius: 60px;
+            border: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-publish {
+            background: #6d8f9f;
+            color: white;
+            box-shadow: 0 10px 18px -8px #6d8f9f;
+        }
+
+        .btn-publish:hover {
+            background: #577b8c;
+            transform: scale(1.02);
+        }
+
+        .btn-unpublish {
+            background: #e9b6b1;
+            color: #2e2e2e;
+            box-shadow: 0 10px 18px -8px #e9b6b1;
+        }
+
+        .btn-unpublish:hover {
+            background: #dd9f99;
+            transform: scale(1.02);
+        }
+
+        .btn-disabled {
+            background: #d9c8b8;
+            color: #6d5d4e;
+            cursor: not-allowed;
+            opacity: 0.7;
+            padding: 16px 40px;
+            border-radius: 60px;
+            border: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .warning-message {
+            color: #b9594a;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* info section */
+        .info-panel {
+            background: #fefcf9;
+            border: 1px solid #f0e3d8;
+            border-radius: 28px;
+            padding: 26px 28px;
+            margin-bottom: 40px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #9b8b7a;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-label i {
+            color: #e9b6b1;
+            width: 18px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4b3f34;
+        }
+
+        .instruction-box {
+            margin-top: 22px;
+            background: #f0e7de;
+            padding: 20px 24px;
+            border-radius: 22px;
+            color: #4b3f34;
+            line-height: 1.6;
+        }
+
+        /* section heading */
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 44px 0 28px 0;
+        }
+
+        .section-heading i {
+            font-size: 32px;
+            background: #f0e7de;
+            padding: 12px;
+            border-radius: 24px;
+            color: #6d8f9f;
+        }
+
+        .section-heading h2 {
+            font-size: 26px;
+            font-weight: 600;
+            color: #4b3f34;
+        }
+
+        /* question card */
+        .question-card {
+            background: #fefcf9;
+            border: 2px solid #f0e3d8;
+            border-radius: 32px;
+            padding: 28px;
+            margin-bottom: 26px;
+            transition: 0.15s;
+        }
+
+        .question-card:hover {
+            border-color: #e9b6b1;
+            box-shadow: 0 10px 22px -16px #b29688;
+        }
+
+        .q-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .q-number {
+            font-weight: 700;
+            background: #f0e7de;
+            padding: 6px 18px;
+            border-radius: 30px;
+            color: #5f5243;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .q-type-badge {
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .type-mcq {
+            background: #b5c9d6; /* powder blue */
+            color: #1e3b45;
+        }
+
+        .type-subjective {
+            background: #e9b6b1; /* rose pink */
+            color: #2e2e2e;
+        }
+
+        .marks-chip {
+            background: #f0e7de;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            color: #6d5d4e;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 12px;
+        }
+
+        .question-text {
+            font-size: 17px;
+            line-height: 1.6;
+            color: #3e3a36;
+            margin: 16px 0 18px;
+            background: #faf7f2;
+            padding: 16px 20px;
+            border-radius: 22px;
+        }
+
+        .options-grid {
+            margin: 12px 0 10px 10px;
+        }
+
+        .option-row {
+            padding: 12px 18px;
+            background: #f8f2eb;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            border-left: 6px solid #d9c8b8;
+        }
+
+        .option-row.correct {
+            background: #e1f0e5;
+            border-left-color: #6d8f9f;
+            font-weight: 500;
+        }
+
+        .model-box {
+            background: #e1f0e5;
+            border-left: 6px solid #6d8f9f;
+            padding: 18px 22px;
+            border-radius: 22px;
+            margin: 12px 0 8px;
+        }
+
+        .question-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background: #b5c9d6; /* powder blue */
+            color: #1e2e3a;
+        }
+
+        .btn-edit:hover {
+            background: #9fb7c7;
+        }
+
+        .btn-delete {
+            background: #e9b6b1; /* rose pink */
+            color: #2e2e2e;
+        }
+
+        .btn-delete:hover {
+            background: #dd9f99;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 70px 30px;
+            background: #fcf8f4;
+            border-radius: 48px;
+            border: 2px dashed #d9c8b8;
+        }
+
+        .empty-state i {
+            font-size: 58px;
+            color: #e9b6b1;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            color: #6d5d4e;
+        }
+    </style>
+</head>
+<body>
+<div class="exam-detail-card">
+    <!-- top row with title + actions -->
+    <div class="top-row">
+        <div class="title-section">
+            <h1><i class="fas fa-pen-to-square"></i> {{ exam_paper.title }}</h1>
+            <span class="subject-badge"><i class="fas fa-book" style="color:#e9b6b1;"></i> {{ exam_paper.subject }}</span>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'exam_paper_list' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+            <a href="{% url 'exam_paper_edit' exam_paper.id %}" class="btn btn-primary"><i class="fas fa-pen"></i> Edit exam</a>
+            <a href="{% url 'question_create' exam_paper.id %}" class="btn btn-success"><i class="fas fa-plus-circle"></i> Add question</a>
+        </div>
+    </div>
+
+    <!-- publish status banner -->
+    {% if exam_paper.published %}
+    <div class="publish-banner status-published">
+        <i class="fas fa-globe"></i>
+        <span class="banner-text">✅ <strong>PUBLISHED</strong> – students can view and attempt this exam</span>
+        <i class="fas fa-check-circle" style="font-size: 26px;"></i>
+    </div>
+    {% else %}
+    <div class="publish-banner status-draft">
+        <i class="fas fa-pencil"></i>
+        <span class="banner-text">📝 <strong>DRAFT</strong> – exam is hidden from students</span>
+        <i class="fas fa-eye-slash" style="font-size: 26px;"></i>
+    </div>
+    {% endif %}
+
+    <!-- publish / unpublish actions (with colour consistency) -->
+    <div class="publish-actions">
+        {% if exam_paper.published %}
+            <form method="post" action="{% url 'unpublish_exam' exam_paper.id %}" style="display: inline;" 
+                  onsubmit="return confirm('Unpublish this exam? Students will no longer see it.');">
+                {% csrf_token %}
+                <button type="submit" class="btn-unpublish"><i class="fas fa-lock-open"></i> Unpublish exam</button>
+            </form>
+        {% else %}
+            {% if questions.count == 0 %}
+                <button class="btn-disabled" disabled><i class="fas fa-ban"></i> Cannot publish (no questions)</button>
+                <div class="warning-message"><i class="fas fa-exclamation-triangle"></i> Add at least one question before publishing</div>
+            {% else %}
+                <form method="post" action="{% url 'publish_exam' exam_paper.id %}" style="display: inline;" 
+                      onsubmit="return confirm('Publish this exam? Students will be able to see and attempt it.');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-publish"><i class="fas fa-rocket"></i> Publish exam</button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- info panel (powder / rose details) -->
+    <div class="info-panel">
+        <div class="info-grid">
+            <div class="info-item"><span class="info-label"><i class="fas fa-calendar"></i> Exam date</span><span class="info-value">{{ exam_paper.exam_date|date:"M d, Y H:i" }}</span></div>
+            <div class="info-item"><span class="info-label"><i class="fas fa-hourglass"></i> Duration</span><span class="info-value">{{ exam_paper.duration_minutes }} min</span></div>
+            <div class="info-item"><span class="info-label"><i class="fas fa-star"></i> Total marks</span><span class="info-value">{{ exam_paper.total_marks }}</span></div>
+            <div class="info-item"><span class="info-label"><i class="fas fa-flag"></i> Passing marks</span><span class="info-value">{{ exam_paper.passing_marks }}</span></div>
+            <div class="info-item"><span class="info-label"><i class="fas fa-list-ol"></i> Questions</span><span class="info-value">{{ questions.count }}</span></div>
+            <div class="info-item"><span class="info-label"><i class="fas fa-toggle-on"></i> Status</span><span class="info-value">{% if exam_paper.is_active %}✓ active{% else %}✗ inactive{% endif %}</span></div>
+            <div class="info-item"><span class="info-label"><i class="fas fa-eye"></i> Published</span><span class="info-value" style="color: {% if exam_paper.published %}#577b8c{% else %}#b9594a{% endif %};">{% if exam_paper.published %}✓ Yes{% else %}✗ No{% endif %}</span></div>
+            <div class="info-item"><span class="info-label"><i class="fas fa-chart-simple"></i> Exam status</span><span class="info-value">{{ exam_paper.exam_status_display }}</span></div>
+        </div>
+        {% if exam_paper.instructions %}
+        <div class="instruction-box">
+            <i class="fas fa-quote-left" style="color:#e9b6b1; margin-right:8px;"></i> {{ exam_paper.instructions }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- questions section -->
+    <div class="section-heading">
+        <i class="fas fa-circle-question"></i>
+        <h2>Questions</h2>
+    </div>
+
+    {% if questions %}
+        {% for question in questions %}
+        <div class="question-card">
+            <div class="q-header">
+                <div class="q-number"><i class="fas fa-hashtag" style="color:#e9b6b1;"></i> Question {{ question.order }}</div>
+                <div>
+                    <span class="q-type-badge {% if question.question_type == 'mcq' %}type-mcq{% else %}type-subjective{% endif %}">
+                        <i class="fas {% if question.question_type == 'mcq' %}fa-check-square{% else %}fa-pen{% endif %}"></i>
+                        {{ question.get_question_type_display }}
+                    </span>
+                    <span class="marks-chip"><i class="fas fa-medal"></i> {{ question.marks }} marks</span>
+                </div>
+            </div>
+            <div class="question-text">{{ question.question_text }}</div>
+
+            {% if question.question_type == 'mcq' %}
+                <div class="options-grid">
+                    <div class="option-row {% if question.correct_answer == 'A' %}correct{% endif %}"><strong>A)</strong> {{ question.option_a }}</div>
+                    <div class="option-row {% if question.correct_answer == 'B' %}correct{% endif %}"><strong>B)</strong> {{ question.option_b }}</div>
+                    <div class="option-row {% if question.correct_answer == 'C' %}correct{% endif %}"><strong>C)</strong> {{ question.option_c }}</div>
+                    <div class="option-row {% if question.correct_answer == 'D' %}correct{% endif %}"><strong>D)</strong> {{ question.option_d }}</div>
+                </div>
+            {% else %}
+                <div class="model-box">
+                    <i class="fas fa-lightbulb" style="color:#6d8f9f; margin-right:8px;"></i><strong>Model answer:</strong>
+                    <p style="margin-top: 10px;">{{ question.model_answer }}</p>
+                </div>
+            {% endif %}
+
+            <div class="question-actions">
+                <a href="{% url 'question_edit' question.id %}" class="btn-small btn-edit"><i class="fas fa-pen"></i> Edit</a>
+                <form method="post" action="{% url 'question_delete' question.id %}" style="display:inline;" 
+                      onsubmit="return confirm('Delete this question?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-small btn-delete"><i class="fas fa-trash-can"></i> Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-clipboard-list"></i>
+            <h3>No questions yet</h3>
+            <p style="color:#a39587; margin:10px 0 18px;">Add questions to build this exam paper.</p>
+            <a href="{% url 'question_create' exam_paper.id %}" class="btn btn-success" style="padding: 14px 32px;"><i class="fas fa-plus"></i> Add first question</a>
+        </div>
+    {% endif %}
+    <!-- subtle footer note -->
+    <div style="margin-top: 40px; text-align: right; color: #c8b9ab; font-size: 13px; border-top: 1px solid #f0e3d8; padding-top: 18px;">
+        <!-- <i class="fas fa-palette" style="color:#e9b6b1;"></i> powder blue · rose pink · light beige · light brown · grey -->
+    </div>
+</div>
+</body>
+</html>
