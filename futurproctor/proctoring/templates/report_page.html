@@ -353,10 +353,10 @@
     </div>
     <div class="card-body-custom">
       <div class="stats-grid">
-        <div class="stat-item"><div class="stat-label"><i class="fas fa-book-open"></i> Exam</div><div class="stat-value" style="font-size:22px;">{{ exam.exam_name }}</div></div>
-        <div class="stat-item"><div class="stat-label"><i class="fas fa-list-ol"></i> Questions</div><div class="stat-value">{{ total_questions }}</div></div>
-        <div class="stat-item"><div class="stat-label"><i class="fas fa-check-circle"></i> Correct</div><div class="stat-value">{{ correct_answers }}</div></div>
-        <div class="stat-item"><div class="stat-label"><i class="fas fa-percent"></i> Score</div><div class="stat-value">{{ exam.percentage_score|default:"0" }}%</div></div>
+        <div class="stat-item"><div class="stat-label"><i class="fas fa-book-open"></i> Exam</div><div class="stat-value" style="font-size:22px;">{{ exam.exam_name|default:"Not Available" }}</div></div>
+        <div class="stat-item"><div class="stat-label"><i class="fas fa-list-ol"></i> Questions</div><div class="stat-value">{{ total_questions|default:"0" }}</div></div>
+        <div class="stat-item"><div class="stat-label"><i class="fas fa-check-circle"></i> Correct</div><div class="stat-value">{{ correct_answers|default:"0" }}</div></div>
+        <div class="stat-item"><div class="stat-label"><i class="fas fa-percent"></i> Score</div><div class="stat-value">{% if exam.percentage_score %}{{ exam.percentage_score }}{% else %}0{% endif %}%</div></div>
       </div>
     </div>
   </div>

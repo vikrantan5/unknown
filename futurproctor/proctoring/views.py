@@ -795,6 +795,11 @@ def report_page(request, student_id):
         for img in CheatingImage.objects.filter(event__student=student)
     ]
 
+       # Get cheating audios
+    cheating_audios = CheatingAudio.objects.filter(event__student=student)
+    audio_urls = [audio.audio.url for audio in cheating_audios if audio.audio]
+
+
     context = {
         'student': student,
         'exam': exam,
@@ -804,8 +809,13 @@ def report_page(request, student_id):
 
         'detected_objects': detected_objects_str,
         'total_tab_switch_count': total_tab_switch_count,
+        'cheating_status': any(
+            event.event_type in ['object_detected', 'multiple_persons', 'tab_switch']
+            for event in cheating_events
+        ),
 
         'cheating_images': cheating_images_data,
+        'audio_urls': audio_urls,
         'cheating_events': cheating_events
     }
 
