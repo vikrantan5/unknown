@@ -206,6 +206,59 @@ def reject_student(request, student_id):
 
 
 @staff_member_required(login_url='/admin/login/')
+def delete_student(request, student_id):
+    """Delete a student - shows confirmation page first"""
+    student = get_object_or_404(Student, id=student_id)
+    
+    if request.method == 'POST':
+        # User confirmed deletion
+        student_name = student.name
+        student_email = student.email
+        
+        # Get counts of related data before deletion
+        exam_attempts_count = StudentExamAttempt.objects.filter(student=student).count()
+        cheating_events_count = CheatingEvent.objects.filter(student=student).count()
+        
+        # Delete the student (cascade will handle related data)
+        # The User object will also be deleted if it exists (OneToOne with cascade)
+        if student.user:
+            student.user.delete()  # This will cascade delete the Student too
+        else:
+            student.delete()
+        
+        messages.success(
+            request, 
+            f"Student '{student_name}' ({student_email}) has been permanently deleted along with "
+            f"{exam_attempts_count} exam attempt(s) and {cheating_events_count} cheating event(s)."
+        )
+        logger.info(f"Admin {request.user.username} deleted student {student_name} (ID: {student_id})")
+        
+        return redirect('student_approval_list')
+    
+    # GET request - show confirmation page
+    # Get related data counts for display
+    exam_attempts = StudentExamAttempt.objects.filter(student=student).count()
+    cheating_events = CheatingEvent.objects.filter(student=student).count()
+    results = Result.objects.filter(attempt__student=student).count()
+    
+    from .models import CheatingImage, CheatingAudio
+    cheating_images = CheatingImage.objects.filter(event__student=student).count()
+    cheating_audios = CheatingAudio.objects.filter(event__student=student).count()
+    
+    context = {
+        'student': student,
+        'exam_attempts_count': exam_attempts,
+        'cheating_events_count': cheating_events,
+        'results_count': results,
+        'cheating_images_count': cheating_images,
+        'cheating_audios_count': cheating_audios,
+    }
+    
+    return render(request, 'admin/delete_student_confirm.html', context)
+
+
+
+@staff_member_required(login_url='/admin/login/')
 def exam_paper_list(request):
     """List all exam papers"""
     exam_papers = ExamPaper.objects.all().order_by('-created_at')

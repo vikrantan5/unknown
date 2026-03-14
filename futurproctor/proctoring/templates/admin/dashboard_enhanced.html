@@ -462,7 +462,10 @@
                         {% if report.has_audio %}<i class="fas fa-microphone-alt" title="audio recording"></i>{% endif %}
                         {% if not report.has_images and not report.has_audio %}—{% endif %}
                     </td>
-                    <td><a href="{% url 'report_page' report.student.id %}" class="btn-sm"><i class="fas fa-chart-simple"></i> View report <i class="fas fa-chevron-right"></i></a></td>
+                      <td>
+                        <a href="{% url 'report_page' report.student.id %}" class="btn-sm"><i class="fas fa-chart-simple"></i> View report <i class="fas fa-chevron-right"></i></a>
+                        <a href="{% url 'delete_student' report.student.id %}" class="btn-sm" style="background: #b13e3e; margin-left: 8px;" title="Delete Student"><i class="fas fa-trash-alt"></i> Delete</a>
+                    </td>
                 </tr>{% endfor %}</tbody>
             </table>
         </div>

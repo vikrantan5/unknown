@@ -266,6 +266,25 @@
             background: #dd9f99;
             transform: translateY(-2px);
         }
+          .btn-delete {
+            background: #b13e3e; /* dark red */
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #8b2f2f;
+            transform: translateY(-2px);
+        }
+
+        .btn-view-report {
+            background: #6d8f9f; /* powder blue */
+            color: white;
+        }
+
+        .btn-view-report:hover {
+            background: #577b8c;
+            transform: translateY(-2px);
+        }
 
         .approval-meta {
             color: #a39587;
@@ -370,7 +389,7 @@
                             <span class="badge badge-rejected"><i class="fas fa-times-circle"></i> Rejected</span>
                         {% endif %}
                     </td>
-                    <td>
+                                      <td>
                         {% if student.approval_status == 'pending' %}
                             <div class="btn-group">
                                 <form method="post" action="{% url 'approve_student' student.id %}" style="display: inline;">
@@ -381,11 +400,20 @@
                                     {% csrf_token %}
                                     <button type="submit" class="btn-action btn-reject"><i class="fas fa-times"></i> Reject</button>
                                 </form>
+                                <a href="{% url 'delete_student' student.id %}" class="btn-action btn-delete"><i class="fas fa-trash-alt"></i> Delete</a>
                             </div>
                         {% else %}
-                            <div class="approval-meta">
-                                <i class="fas fa-user-shield"></i>
-                                {{ student.approved_by.username }} <span style="color:#c8b9ab;">•</span> {{ student.approved_at|date:"M d, Y" }}
+                            <div class="btn-group">
+                                <div class="approval-meta">
+                                    <i class="fas fa-user-shield"></i>
+                                    {{ student.approved_by.username }} <span style="color:#c8b9ab;">•</span> {{ student.approved_at|date:"M d, Y" }}
+                                </div>
+                                <a href="{% url 'report_page' student.id %}" class="btn-action btn-view-report" title="View Report">
+                                    <i class="fas fa-file-alt"></i> Report
+                                </a>
+                                <a href="{% url 'delete_student' student.id %}" class="btn-action btn-delete" title="Delete Student">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </a>
                             </div>
                         {% endif %}
                     </td>

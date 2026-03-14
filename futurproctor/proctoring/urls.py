@@ -93,6 +93,7 @@ urlpatterns = [
     path('admin/students/approval/', admin_views.student_approval_list, name='student_approval_list'),
     path('admin/students/<int:student_id>/approve/', admin_views.approve_student, name='approve_student'),
     path('admin/students/<int:student_id>/reject/', admin_views.reject_student, name='reject_student'),
+    path('admin/students/<int:student_id>/delete/', admin_views.delete_student, name='delete_student'),
     
     # Exam Paper Management URLs
     path('admin/exams/', admin_views.exam_paper_list, name='exam_paper_list'),

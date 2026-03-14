@@ -304,8 +304,8 @@ def gen_frames():
         frame = buffer.tobytes()  # Convert the frame to bytes
 
         # Yield the frame as part of a streaming response
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        yield (b'--framern'
+               b'Content-Type: image/jpegrnrn' + frame + b'rn')
 
     # Release the webcam when the loop ends
     camera.release()
@@ -724,7 +724,7 @@ def proctor_notifications(request):
         while True:
             events = CheatingEvent.objects.filter(cheating_flag=True).order_by('-timestamp')[:5]
             if events:
-                yield f"data: {json.dumps([str(event) for event in events])}\n\n"
+                yield f"data: {json.dumps([str(event) for event in events])}nn"
             time.sleep(5)
     
     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
@@ -777,7 +777,55 @@ def report_page(request, student_id):
 
     student = get_object_or_404(Student, id=student_id)
 
-    exam = Exam.objects.filter(student=student).order_by('-timestamp').first()
+    # Try to get data from the NEW exam system first (StudentExamAttempt + Result)
+    from .models import StudentExamAttempt, Result
+    
+    latest_attempt = StudentExamAttempt.objects.filter(student=student).order_by('-submitted_at').first()
+    
+    # Initialize exam data variables
+    exam_name = "Not Available"
+    total_questions = 0
+    correct_answers = 0
+    percentage_score = 0
+    
+    if latest_attempt:
+        # NEW SYSTEM: Use data from StudentExamAttempt and Result
+        exam_name = latest_attempt.exam_paper.title
+        
+        # Get total questions from the exam paper
+        total_questions = latest_attempt.exam_paper.questions.count()
+        
+        # Get correct MCQ answers count
+        from .models import StudentAnswer
+        correct_answers = StudentAnswer.objects.filter(
+            attempt=latest_attempt,
+            is_correct=True
+        ).count()
+        
+        # Get percentage from attempt or result
+        try:
+            result = Result.objects.get(attempt=latest_attempt)
+            percentage_score = result.percentage
+        except Result.DoesNotExist:
+            percentage_score = latest_attempt.percentage if latest_attempt.percentage else 0
+    else:
+        # OLD SYSTEM: Fallback to old Exam model
+        exam = Exam.objects.filter(student=student).order_by('-timestamp').first()
+        if exam:
+            exam_name = exam.exam_name
+            total_questions = exam.total_questions if exam.total_questions else 0
+            correct_answers = exam.correct_answers if exam.correct_answers else 0
+            percentage_score = exam.percentage_score if exam.percentage_score else 0
+
+    # Create a mock exam object to pass to template (for backward compatibility)
+    class ExamData:
+        pass
+    
+    exam_obj = ExamData()
+    exam_obj.exam_name = exam_name
+    exam_obj.total_questions = total_questions
+    exam_obj.correct_answers = correct_answers
+    exam_obj.percentage_score = percentage_score
 
     cheating_events = CheatingEvent.objects.filter(student=student)
 
@@ -795,17 +843,17 @@ def report_page(request, student_id):
         for img in CheatingImage.objects.filter(event__student=student)
     ]
 
-       # Get cheating audios
+    # Get cheating audios
     cheating_audios = CheatingAudio.objects.filter(event__student=student)
     audio_urls = [audio.audio.url for audio in cheating_audios if audio.audio]
 
 
     context = {
         'student': student,
-        'exam': exam,
+        'exam': exam_obj,
 
-        'correct_answers': exam.correct_answers if exam else 0,
-        'total_questions': exam.total_questions if exam else 0,
+        'correct_answers': correct_answers,
+        'total_questions': total_questions,
 
         'detected_objects': detected_objects_str,
         'total_tab_switch_count': total_tab_switch_count,
@@ -823,7 +871,6 @@ def report_page(request, student_id):
 
 
 
-
 from django.template.loader import get_template
 try:
     from xhtml2pdf import pisa
@@ -837,16 +884,58 @@ def download_report(request, student_id):
     # Get student
     student = get_object_or_404(Student, id=student_id)
 
-    # Get exam
-    exam = student.exams.first()
+    # Try to get data from the NEW exam system first (StudentExamAttempt + Result)
+    from .models import StudentExamAttempt, Result
+    
+    latest_attempt = StudentExamAttempt.objects.filter(student=student).order_by('-submitted_at').first()
+    
+    # Initialize exam data variables
+    exam_name = "Not Available"
+    total_questions = 0
+    correct_answers = 0
+    percentage_score = 0
+    
+    if latest_attempt:
+        # NEW SYSTEM: Use data from StudentExamAttempt and Result
+        exam_name = latest_attempt.exam_paper.title
+        
+        # Get total questions from the exam paper
+        total_questions = latest_attempt.exam_paper.questions.count()
+        
+        # Get correct MCQ answers count
+        from .models import StudentAnswer
+        correct_answers = StudentAnswer.objects.filter(
+            attempt=latest_attempt,
+            is_correct=True
+        ).count()
+        
+        # Get percentage from attempt or result
+        try:
+            result = Result.objects.get(attempt=latest_attempt)
+            percentage_score = result.percentage
+        except Result.DoesNotExist:
+            percentage_score = latest_attempt.percentage if latest_attempt.percentage else 0
+    else:
+        # OLD SYSTEM: Fallback to old Exam model
+        exam = student.exams.first()
+        if exam:
+            exam_name = exam.exam_name
+            total_questions = exam.total_questions if exam.total_questions else 0
+            correct_answers = exam.correct_answers if exam.correct_answers else 0
+            percentage_score = exam.percentage_score if exam.percentage_score else 0
+
+    # Create a mock exam object to pass to template (for backward compatibility)
+    class ExamData:
+        pass
+    
+    exam_obj = ExamData()
+    exam_obj.exam_name = exam_name
+    exam_obj.total_questions = total_questions
+    exam_obj.correct_answers = correct_answers
+    exam_obj.percentage_score = percentage_score
 
     # Get cheating events
     cheating_events = CheatingEvent.objects.filter(student=student)
-
-    # Calculate score
-    score = 0
-    if exam and exam.total_questions > 0:
-        score = round((exam.correct_answers / exam.total_questions) * 100, 2)
 
     # Get detected objects
     detected_objects_list = get_detected_objects_string(cheating_events)
@@ -874,13 +963,13 @@ def download_report(request, student_id):
     # Context
     context = {
         "student": student,
-        "exam": exam,
+        "exam": exam_obj,
         "detected_objects": detected_objects_str,
-        "score": score,
+        "score": percentage_score,
         "total_tab_switch_count": total_tab_switch_count,
 
-        "correct_answers": exam.correct_answers if exam else 0,
-        "total_questions": exam.total_questions if exam else 0,
+        "correct_answers": correct_answers,
+        "total_questions": total_questions,
 
         "cheating_status": any(
             event.event_type in ['object_detected', 'multiple_persons', 'tab_switch']
